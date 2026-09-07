@@ -40,3 +40,18 @@ Transforma la gestión empírica en un proceso guiado y predecible. Permite la c
 ### 1.7 Datos sensibles y ética profesional (Código IEEE/ACM)
 En cumplimiento con el Código de Ética IEEE/ACM sobre la protección de la privacidad, las notas de campo y ubicaciones de cultivo pertenecen exclusivamente al ámbito privado del usuario. Se aplica *privacidad por diseño*, manteniendo las bitácoras aisladas y desacopladas del catálogo base compartido.
 
+
+## ** 2. Diagramas de Contexto (DFD)
+
+### 2.1 DFD Nivel 0
+flowchart TD
+    %% Proceso Central Único
+    P((0.0<br/>Asistente de Jardinería<br/>Inteligente))
+
+    %% Entidad Externa Única
+    U[Usuario / Jardinero]
+
+    %% Flujos de Información (Entradas y Salidas)
+    U -->|Lotes de semillas, notas de campo y fotografías| P
+    P -->|Alertas de stock predictivo, muro cronológico y fichas| U
+
