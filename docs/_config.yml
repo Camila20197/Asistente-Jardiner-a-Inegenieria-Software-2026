@@ -1,6 +1,0 @@
-theme: just-the-docs
-title: Ingeniería de Software — Materiales de Cátedra
-description: Guías de TP, instructivos y procedimientos — Licenciatura en Bioinformática, FIUNER
-mermaid:
-  version: "10.9.1"
-nav_order_sort: nav_order
