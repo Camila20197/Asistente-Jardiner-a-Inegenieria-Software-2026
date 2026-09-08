@@ -46,9 +46,60 @@ En cumplimiento con el Código de Ética IEEE/ACM sobre la protección de la pri
 ### 2.1 DFD Nivel 0
 ```mermaid
 flowchart TD
-    P((0.0<br/>Asistente de Jardinería<br/>Inteligente))
-    U[Usuario / Jardinero]
+    P((<br/>Asistente de Jardinería<br/>))
+    U[Usuario]
 
-    U -->|Lotes de semillas, notas de campo y fotos| P
+    U -->|Lotes de semillas, notas de campo| P
     P -->|Alertas de stock, muro cronológico y fichas| U
+
+    A[Administrador]
+    A -->|Sincronizar la BD general| P
+    P -->|Reporte de estado| A
 ```
+
+### 2.2 DFD Nivel 1
+```mermaid
+flowchart TD
+    %% Entidades Externas
+    U[Usuario / Jardinero]
+    ADM[Administrador]
+    API[API Externa]
+
+    %% Procesos Internos
+    P1((1<br/>Sincronizar y administrar BD general))
+    P2((2<br/>Controlar stock de semillas))
+    P3((3<br/>Registrar bitácora personal))
+    P4((4<br/>Visualizar historial y estado))
+
+    %% Almacenes de Datos
+    D1[(D1 · BD General de Especies)]
+    D2[(D2 · Lotes de semillas)]
+    D3[(D3 · Bitácora personal)]
+
+    %% Flujos Proceso 1: Administración BD General
+    ADM -->|solicitud de sincronización| P1
+    API -->|datos botánicos externos| P1
+    P1 -->|guarda / actualiza catálogo| D1
+
+    %% Flujos Proceso 2: Control de Semillas
+    U -->|datos de lote| P2
+    P2 -->|lote registrado| D2
+    D2 -->|antigüedad de lote| P2
+    P2 -->|alerta de stock crítico| U
+
+    %% Flujos Proceso 3: Bitácora Personal
+    U -->|nota de campo y foto| P3
+    D1 -->|especie consultada| P3
+    P3 -->|observación guardada| D3
+
+    %% Flujos Proceso 4: Visualización
+    D1 -->|fichas botánicas generales| P4
+    D2 -->|stock viable| P4
+    D3 -->|entradas de bitácora| P4
+    P4 -->|muro cronológico y paneles| U
+```
+
+## 3. Diagrama de Dominio
+
+
+
