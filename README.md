@@ -13,3 +13,10 @@ Para consultar la documentación técnica completa, diagramas de contexto, domin
 
 ###Ciclo de Vida del Software
 Se ha seleccionado un **Ciclo de Vida Iterativo Incremental**, debido a que los requerimientos de dominio no se encuentran completamente cerrados y pueden evolucionar con la interacción del usuario, este modelo permite validar tempranamente el Producto Minimo Viable (MVP) basado en el inventario de semillas y la bitácora persona, incorporando funciones complejas e integraciones externas en interaciones posteriores.
+
+###Fuentes de descubrimiento
+* Dominio y problema: asistente personal para el control de huerta, semillas y/o jardinería. Los técnicos y jardineros son quienes administran esto lo hacen en cuaderno o papel.
+* Datos: datos textuales y observaciones que provienen de la práctica y de bibliografía.
+* Usuarios y stakeholders: técnico jardinero, agrónomos, usuario general, administrador.
+* Alcance realista: información de flora, stock de semillas, bitácora personal.
+* Valor: posibilidad de maximizar lo estudiado y observado, teniéndolo todo en un solo soporte.
