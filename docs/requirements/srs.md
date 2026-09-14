@@ -239,7 +239,7 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 
 - **RF10 (obligatorio) — Historial de bitácora:** el sistema debe permitir visualizar, para una especie dada, la línea de tiempo de las entradas de bitácora registradas (fecha, autor, notas), ordenadas cronológicamente.
 - **RF11 (obligatorio) — Panel de stock:** el sistema debe permitir visualizar un resumen del stock total de semillas por especie y por lote, destacando las especies por debajo del umbral crítico.
-- **RF12 (obligatorio) — Filtros de visualización:** el sistema debe permitir filtrar la información visualizada por especie, por rango de fechas y/o por usuario que la cargó.
+- **RF12 (obligatorio) — Filtros de visualización:** el sistema debe permitir filtrar la información visualizada por especie, por rango de fechas.
 
 ### Diferidos a un TP posterior
 
@@ -339,25 +339,13 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 - **Realiza:** RF00c.
 - No se implementa en TP1: las dos cuentas precargadas cubren la necesidad mínima de diferenciar roles.
 
-### CU05 (obligatorio, nuevo): Sincronizar catálogo de especies
+### CU05 (diferido a un TP posterior): Sincronizar catálogo de especies
 
 - **Actor principal:** administrador.
 - **Objetivo:** actualizar el catálogo local de especies con los datos vigentes de la fuente externa (INTA/INASE).
-- **Realiza:** RF13, RF00b.
-- **Precondición:** el administrador ha iniciado sesión (CU00) y el dispositivo tiene conexión a internet *(única función del sistema que la requiere de forma imprescindible — ver nota bajo RNF02)*.
-
-**Flujo principal**
-1. El administrador accede a la opción "Sincronizar catálogo".
-2. El sistema consulta la fuente externa y descarga el listado de especies/cultivares.
-3. El sistema compara el listado contra el catálogo local.
-4. El sistema agrega las especies nuevas y actualiza los campos de origen externo de las existentes, sin tocar los campos agronómicos completados manualmente.
-5. El sistema muestra un resumen (cantidad de especies agregadas y actualizadas).
-
-**Postcondición:** el catálogo de especies queda actualizado; las especies nuevas quedan disponibles para RF01/RF04/RF08b.
-
-**Flujos alternativos/excepción**
-- E1: la fuente externa no responde o devuelve error → el sistema aborta la sincronización sin modificar el catálogo local y notifica el error al administrador.
-- A1: una especie de la fuente externa ya existe localmente con datos agronómicos completados → se actualizan solo los campos de origen externo (ver RF13).
+- **Realiza:** RF00b.
+- **Precondición:** el administrador ha iniciado sesión (CU00) y el dispositivo tiene conexión a internet 
+- No se implementa en TP1: las dos cuentas precargadas cubren la necesidad mínima de diferenciar roles.
 
 ## Historias de usuario
 
