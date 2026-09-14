@@ -23,6 +23,45 @@ En la jardinería, los cultivadores enfrentar desorganización en el seguimiento
 1. Administrador
 2. Usuario
 
+#### Administrador
+
+Rol interno del sistema, no un perfil del dominio. La entrevista con la clienta no
+mostró un segundo perfil que administre el sistema, así que el administrador no tiene
+funcionalidad propia en esta primera versión.
+Se lo mantiene identificado porque el catálogo de especies es un dato de referencia
+compartido y no personal: alguien tiene que responder por su consistencia. Sus
+responsabilidades previstas son:
+- Curar el catálogo compartido de especies: altas, correcciones y unificación de duplicados.
+- Validar las fichas incorporadas desde fuentes externas (Flora Argentina, GBIF)
+  antes de que queden disponibles para consulta.
+- Dar de alta las cuentas de usuario.
+Ninguna de las tres se desarrolla en este TP: se trabaja con dos cuentas precargadas
+y el catálogo se carga manualmente. El administrador queda documentado a nivel de
+alcance, sin casos de uso ni historias de usuario propias.
+
+#### Usuario
+
+Perfil del jardinero/a que lleva su propio registro botánico. Es el usuario final del
+sistema y el destinatario del valor central del prototipo: hoy resuelve esto con una
+planilla de cálculo que consulta desde el celular, más carpetas de fotos sueltas en la
+PC, sin conexión entre ambas.
+Trabaja mayormente desde el celular, en el jardín, en el momento de estar frente a
+la planta. Sus tareas son:
+- Cargar fichas de especie de forma incremental: primero la identidad (nombre
+  científico, nombre común, familia) y los cuidados a medida que consigue la
+  información.
+- Asociar fotos a cada especie, clasificadas por tipo (planta completa, hoja, flor,
+  fruto, semilla).
+- Registrar los lotes de semillas que tiene en stock, con año y procedencia.
+- Registrar notas de campo asociadas a una especie para documentar cómo evoluciona
+  el cultivo.
+- Consultar el calendario mensual para ver qué especies tienen alguna actividad ese
+  mes: siembra, tratamiento pregerminativo, poda, fertilización, trasplante o
+  reproducción asexual.
+- Consultar la ficha completa de una especie mientras trabaja con ella.
+Los lotes de semillas y las notas de campo pertenecen únicamente a la cuenta que los
+cargó. El catálogo de especies, en cambio, es compartido (ver Administrador).
+
 ### 1.4 Propuesta de valor
 Transforma la gestión empírica en un proceso guiado y predecible. Permite la consulta instantánea de semillas viables y consolida el historial del jardin en una visión cronologica accesible.
 
