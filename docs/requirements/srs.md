@@ -212,5 +212,116 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 - **RF00b — Control de acceso por rol:** restringir funcionalidades específicas al rol administrador (ej. configuración de umbrales).
 - **RF00c — Gestión de cuentas:** alta, baja y asignación de rol a cuentas de usuario (reemplazado en TP1 por las dos cuentas precargadas).
 
+## Casos de uso
 
+### CU00 (obligatorio): Iniciar sesión
+
+- **Actor principal:** cualquier stakeholder con una de las dos cuentas precargadas.
+- **Objetivo:** autenticarse para acceder a las funcionalidades habilitadas por su rol.
+- **Realiza:** RF00.
+- **Precondición:** existen las dos cuentas precargadas (administrador / usuario).
+
+**Flujo principal**
+1. El usuario ingresa usuario y contraseña.
+2. El sistema valida las credenciales.
+3. El sistema determina el rol de la cuenta (administrador / usuario).
+4. El sistema redirige a la pantalla principal habilitando las funciones correspondientes al rol.
+
+**Postcondición:** sesión iniciada; el rol determina las funcionalidades visibles/habilitadas.
+
+**Flujos alternativos/excepción**
+- A1: credenciales inválidas → el sistema muestra un mensaje de error y permite reintentar.
+
+### CU01 (obligatorio): Gestión y predictibilidad de lotes de semillas
+
+- **Actor principal:** usuario autenticado. Al ser un MVP de uso personal, no se restringe la carga de stock por perfil profesional: cualquier stakeholder autenticado (agrónomo, técnico o público general) puede operar sobre su propio stock.
+- **Objetivo:** registrar un nuevo lote de semillas, consultar el stock existente y recibir alertas de stock crítico.
+- **Realiza:** RF01, RF02, RF03 (si se incluye), RF04.
+- **Precondición:** el usuario ha iniciado sesión (CU00) y existe al menos una especie registrada (RF08).
+
+**Flujo principal**
+1. El usuario selecciona una especie y accede a la sección "Lotes".
+2. El sistema muestra los lotes existentes con su cantidad.
+3. El usuario selecciona "Cargar nuevo Lote".
+4. El usuario ingresa la cantidad inicial, año y procedencia.
+5. Se confirma el registro.
+6. El sistema muestra el nuevo lote en el listado.
+
+**Postcondición:** el nuevo lote de semilla queda almacenado en el sistema y el stock total de la especie se actualiza.
+
+**Flujos alternativos/excepción**
+- A1: cantidad inicial menor o igual a cero → el sistema rechaza el alta y solicita corrección.
+- A2: año de recolección mayor al actual → el sistema rechaza el alta y solicita corrección.
+- A3: modificación o baja manual de lote.
+- E1: stock total de la especie por debajo del umbral definido → el sistema dispara una alerta (RF03).
+
+### CU02 (obligatorio): Registrar y visualizar bitácora personal
+
+- **Actor principal:** usuario autenticado.
+- **Objetivo:** registrar observaciones personales, notas de evolución y visualizar el historial del cultivo.
+- **Realiza:** RF05, RF06.
+- **Precondición:** el usuario ha iniciado sesión (CU00) y ha ingresado al módulo "Bitácora personal".
+
+**Flujo principal**
+1. El usuario selecciona la opción "Nueva Entrada".
+2. El sistema solicita seleccionar tipo/especie.
+3. El usuario busca y selecciona una especie (A1 si no existe).
+4. El sistema muestra entradas anteriores y habilita la nueva entrada.
+5. El usuario ingresa los datos.
+6. El usuario guarda la entrada.
+7. El sistema actualiza la línea del tiempo.
+
+**Postcondición:** la observación de campo queda asociada a la especie y visible.
+
+**Flujos alternativos/excepción**
+- A1: la especie no existe → se ofrece darla de alta (RF08) antes de continuar.
+- A2: creación o eliminación de entrada.
+- E1: error en el formato ingresado.
+
+### CU03 (obligatorio): Consultar panel de visualización
+
+- **Actor principal:** usuario autenticado.
+- **Objetivo:** visualizar el estado consolidado del stock y de la bitácora, con filtros.
+- **Realiza:** RF10, RF11, RF12.
+- **Precondición:** el usuario ha iniciado sesión (CU00).
+
+**Flujo principal**
+1. El usuario accede a la sección "Panel" / "Visualización".
+2. El sistema muestra el resumen de stock por especie y por lote, destacando las especies bajo el umbral crítico.
+3. El usuario selecciona una especie para ver su historial de bitácora.
+4. El sistema muestra las entradas asociadas, ordenadas cronológicamente.
+5. El usuario aplica filtros (por especie, rango de fechas o usuario que cargó el dato).
+6. El sistema actualiza la vista según los filtros aplicados.
+
+**Postcondición:** el usuario visualizó información consolidada sin modificar datos.
+
+**Flujos alternativos/excepción**
+- E1: no hay datos para los filtros aplicados → el sistema muestra un estado vacío informativo.
+
+### CU04 (diferido a un TP posterior): Gestionar usuarios y roles
+
+- **Actor principal:** administrador.
+- **Objetivo:** dar de alta, baja o modificar cuentas de usuario y asignarles un rol.
+- **Realiza:** RF00c.
+- No se implementa en TP1: las dos cuentas precargadas cubren la necesidad mínima de diferenciar roles.
+
+### CU05 (obligatorio, nuevo): Sincronizar catálogo de especies
+
+- **Actor principal:** administrador.
+- **Objetivo:** actualizar el catálogo local de especies con los datos vigentes de la fuente externa (INTA/INASE).
+- **Realiza:** RF13, RF00b.
+- **Precondición:** el administrador ha iniciado sesión (CU00) y el dispositivo tiene conexión a internet *(única función del sistema que la requiere de forma imprescindible — ver nota bajo RNF02)*.
+
+**Flujo principal**
+1. El administrador accede a la opción "Sincronizar catálogo".
+2. El sistema consulta la fuente externa y descarga el listado de especies/cultivares.
+3. El sistema compara el listado contra el catálogo local.
+4. El sistema agrega las especies nuevas y actualiza los campos de origen externo de las existentes, sin tocar los campos agronómicos completados manualmente.
+5. El sistema muestra un resumen (cantidad de especies agregadas y actualizadas).
+
+**Postcondición:** el catálogo de especies queda actualizado; las especies nuevas quedan disponibles para RF01/RF04/RF08b.
+
+**Flujos alternativos/excepción**
+- E1: la fuente externa no responde o devuelve error → el sistema aborta la sincronización sin modificar el catálogo local y notifica el error al administrador.
+- A1: una especie de la fuente externa ya existe localmente con datos agronómicos completados → se actualizan solo los campos de origen externo (ver RF13).
 
