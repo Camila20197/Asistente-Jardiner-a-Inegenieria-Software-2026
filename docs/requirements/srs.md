@@ -5,7 +5,7 @@
 ## 1. Visión y alcance
 
 ### 1.1 Dominio y problema
-En la jardinería, los cultivadores enfrentar desorganización en el seguimiento de sus cultivos o pérdida de insumos. Actualmente esto se resuelve de forma frangmentada mediante plantillas de cálculo, libretas de papel o la memoria, lo que puede provocar la pérdida de semillas por vencimiento y la falta de registros de técnicas que funcionaron en temporadas pasadas. 
+En la jardinería, los cultivadores enfrentan desorganización en el seguimiento de sus cultivos o pérdida de insumos. Actualmente esto se resuelve de forma frangmentada mediante plantillas de cálculo, libretas de papel o la memoria, lo que puede provocar la pérdida de semillas por vencimiento y la falta de registros de técnicas que funcionaron en temporadas pasadas. 
 
 ### 1.2 Datos gestionados
 * **Datos botánicos:** Fichas de especie, nombres científicos con reglas de formato (género en cursiva, variedad entre comillas simples), nombres comunes y familias.
@@ -31,7 +31,7 @@ funcionalidad propia en esta primera versión.
 Se lo mantiene identificado porque el catálogo de especies es un dato de referencia
 compartido y no personal: alguien tiene que responder por su consistencia. Sus
 responsabilidades previstas son:
-- Curar el catálogo compartido de especies: altas, correcciones y unificación de duplicados.
+- Administrar el catálogo compartido de especies: altas, correcciones y unificación de duplicados.
 - Validar las fichas incorporadas desde fuentes externas (Flora Argentina, GBIF)
   antes de que queden disponibles para consulta.
 - Dar de alta las cuentas de usuario.
@@ -69,8 +69,10 @@ Transforma la gestión empírica en un proceso guiado y predecible. Permite la c
 * **Procesos seleccionados para desarrollar**
 1. Control de semillas: Permite controlar el inventario.
 2. Gestión de bitácora y observaciones: Permite realizar un seguimiento de las especies elegidas, añadiendo controles pregerminativos, tipos, enfermedades y plagas, entre otros.
+3. Visualización: Panel de observación de stock y bitácora.
 * **Procesos descartados para iteracciones futuras:**
 1. *Sincronización con Google Calendar API* y *Alertas Climáticas con Estación Meteorológica*. Se posponen por depender de APIs de terceros. Aislar estos componentes permite consolidar la arquitectura de datos propia y reducir riesgos técnicos.
+2. *Sincronización del catálogo de especies con fuentes externas (Flora Argentina, GBIF) y administración de cuentas de usuario.* Se posponen porque, según la entrevista con la clienta, el administrador no tiene funcionalidad propia en esta primera versión (ver 1.3); el catálogo se carga manualmente.
 
 ### 1.6 Riesgo de fracaso y mitigación
 **Riesgo identificado (módulo 1):** *Incertidumbre inicial y cambio de requerimientos sobre la bitácora o gestor de semillas*
@@ -91,9 +93,6 @@ flowchart TD
     U -->|Lotes de semillas, notas de campo| P
     P -->|Alertas de stock, muro cronológico y fichas| U
 
-    A[Administrador]
-    A -->|Sincronizar la BD general| P
-    P -->|Reporte de estado| A
 ```
 
 ### 2.2 DFD Nivel 1
@@ -101,11 +100,8 @@ flowchart TD
 flowchart TD
     %% Entidades Externas
     U[Usuario / Jardinero]
-    ADM[Administrador]
-    API[API Externa]
 
     %% Procesos Internos
-    P1((1<br/>Sincronizar y administrar BD general))
     P2((2<br/>Controlar stock de semillas))
     P3((3<br/>Registrar bitácora personal))
     P4((4<br/>Visualizar historial y estado))
@@ -115,15 +111,14 @@ flowchart TD
     D2[(D2 · Lotes de semillas)]
     D3[(D3 · Bitácora personal)]
 
-    %% Flujos Proceso 1: Administración BD General
-    ADM -->|solicitud de sincronización| P1
-    API -->|datos botánicos externos| P1
-    P1 -->|guarda / actualiza catálogo| D1
+    %% Alta manual de especie (no hay sincronización en TP1)
+    U -->|alta manual de ficha de especie| D1
 
     %% Flujos Proceso 2: Control de Semillas
     U -->|datos de lote| P2
     P2 -->|lote registrado| D2
     D2 -->|antigüedad de lote| P2
+    D1 -->|especie existente| P2
     P2 -->|alerta de stock crítico| U
 
     %% Flujos Proceso 3: Bitácora Personal
