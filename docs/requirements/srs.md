@@ -394,15 +394,15 @@ Realiza: RF04, CU01.
 
 ### HU-06 (obligatoria) — Dar de alta una especie manualmente
 
-**Como** usuario autenticado, **quiero** poder dar de alta una especie que no está en el catálogo, **para** registrar lotes u observaciones sobre ella aunque no venga de la sincronización con la fuente externa.
+**Como** usuario autenticado, **quiero** poder dar de alta una especie que no está en el catálogo, **para** registrar lotes u observaciones sobre ella.
 Realiza: RF08, CU01/CU02 (flujo alternativo al buscar una especie inexistente).
 
 - Given que busco una especie y no aparece en el catálogo, When elijo "dar de alta especie nueva" y completo nombre, meses de siembra y cuidados básicos, Then la especie queda disponible para asociarle lotes y entradas de bitácora.
 
-### HU-07 (obligatoria) — Completar datos agronómicos de una especie sincronizada
+### HU-07 (a definir en TP posterior) — Completar datos agronómicos de una especie sincronizada
 
 **Como** usuario autenticado, **quiero** completar o corregir el período de siembra y los cuidados de una especie que llegó por sincronización, **para** tener información agronómica útil aunque la fuente externa no la incluya.
-Realiza: RF08b.
+Realiza: RF08 y CU05.
 
 - Given que una especie fue incorporada por sincronización y no tiene período de siembra o cuidados cargados, When completo esos campos, Then quedan guardados y visibles al consultar la especie.
 - Given que ya completé esos campos, When se ejecuta una nueva sincronización (CU05), Then mis datos agronómicos no se pierden ni se sobrescriben.
@@ -439,10 +439,10 @@ Realiza: RF12 (corregido — ver nota en Requerimientos funcionales), CU03.
 - Given que estoy en el panel, When filtro por una especie puntual, Then veo solo el stock y la bitácora de esa especie.
 - Given que estoy en el panel, When filtro por un rango de fechas, Then la línea de tiempo de bitácora se limita a ese rango.
 
-### HU-12 (obligatoria) — Sincronizar el catálogo de especies
+### HU-12 (diferido a un TP posterior) — Sincronizar el catálogo de especies
 
 **Como** administrador, **quiero** sincronizar el catálogo de especies con la fuente externa, **para** mantenerlo actualizado sin tener que cargar todo a mano.
-Realiza: RF13, RF00b, CU05.
+Realiza: RF00b, CU05.
 
 - Given que soy administrador y tengo conexión a internet, When ejecuto "sincronizar catálogo", Then el sistema agrega las especies nuevas, actualiza los campos de origen externo de las existentes sin pisar los datos agronómicos ya completados, y me muestra un resumen de cuántas se agregaron/actualizaron.
 - Given que la fuente externa no responde, When intento sincronizar, Then el sistema aborta sin modificar el catálogo local y me avisa del error.
