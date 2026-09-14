@@ -364,3 +364,111 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 - E1: la fuente externa no responde o devuelve error → el sistema aborta la sincronización sin modificar el catálogo local y notifica el error al administrador.
 - A1: una especie de la fuente externa ya existe localmente con datos agronómicos completados → se actualizan solo los campos de origen externo (ver RF13).
 
+## Historias de usuario
+
+Una historia de usuario por caso de uso. Cada una indica su prioridad, copiada de la del RF/CU que implementa.
+
+### HU-01 (obligatoria) — Iniciar sesión
+
+**Como** stakeholder con una cuenta precargada, **quiero** iniciar sesión con usuario y contraseña, **para** acceder a las funciones habilitadas por mi rol.
+Realiza: RF00, CU00.
+
+- Given que tengo una cuenta válida, When ingreso usuario y contraseña correctos, Then accedo al sistema con las funciones de mi rol habilitadas.
+- Given que ingreso credenciales inválidas, When intento iniciar sesión, Then el sistema muestra un error y me permite reintentar.
+
+### HU-02 (obligatoria) — Registrar un nuevo lote de semillas
+
+**Como** usuario autenticado, **quiero** registrar un nuevo lote de semillas de una especie, **para** llevar el control de mi propio stock.
+Realiza: RF01, CU01.
+
+- Given que estoy autenticado y la especie ya existe en el catálogo, When cargo cantidad inicial, año y procedencia válidos y confirmo, Then el lote queda guardado y visible en mi listado de lotes.
+- Given que ingreso una cantidad inicial menor o igual a cero, When confirmo el alta, Then el sistema rechaza el registro y me pide corregirlo.
+- Given que ingreso un año de recolección mayor al actual, When confirmo el alta, Then el sistema rechaza el registro y me pide corregirlo.
+
+### HU-03 (obligatoria) — Modificar o dar de baja un lote
+
+**Como** usuario autenticado, **quiero** modificar o dar de baja un lote existente, **para** mantener mi stock al día cuando uso, agoto o descarto semillas.
+Realiza: RF02, CU01.
+
+- Given que tengo un lote propio cargado, When actualizo su cantidad disponible, Then el stock total de esa especie se recalcula al instante.
+- Given que un lote se agotó o descartó, When lo doy de baja, Then deja de contarse en el stock total, pero queda su historial.
+
+### HU-04 (opcional) — Recibir alerta de stock crítico
+
+**Como** usuario autenticado, **quiero** ver una alerta cuando el stock de una especie caiga por debajo del umbral definido, **para** saber que tengo que reponer semillas.
+Realiza: RF03, CU01.
+
+- Given que el stock total de una especie (sumando todos mis lotes) queda por debajo del umbral global, When entro a la sección de esa especie o al panel, Then veo una alerta visible indicando stock crítico.
+- Given que el stock de una especie está por encima del umbral, When la consulto, Then no se muestra ninguna alerta.
+
+### HU-05 (obligatoria) — Consultar el catálogo de semillas por mes de siembra
+
+**Como** usuario autenticado, **quiero** filtrar el catálogo de especies por el mes de siembra, **para** saber qué puedo sembrar en este momento.
+Realiza: RF04, CU01.
+
+- Given que selecciono un mes del año, When aplico el filtro, Then el sistema muestra solo las especies cuyo período de siembra incluye ese mes.
+- Given que ningún especie tiene ese mes entre sus períodos de siembra, When aplico el filtro, Then el listado queda vacío con un aviso claro (no un error).
+
+### HU-06 (obligatoria) — Dar de alta una especie manualmente
+
+**Como** usuario autenticado, **quiero** poder dar de alta una especie que no está en el catálogo, **para** registrar lotes u observaciones sobre ella aunque no venga de la sincronización con la fuente externa.
+Realiza: RF08, CU01/CU02 (flujo alternativo al buscar una especie inexistente).
+
+- Given que busco una especie y no aparece en el catálogo, When elijo "dar de alta especie nueva" y completo nombre, meses de siembra y cuidados básicos, Then la especie queda disponible para asociarle lotes y entradas de bitácora.
+
+### HU-07 (obligatoria) — Completar datos agronómicos de una especie sincronizada
+
+**Como** usuario autenticado, **quiero** completar o corregir el período de siembra y los cuidados de una especie que llegó por sincronización, **para** tener información agronómica útil aunque la fuente externa no la incluya.
+Realiza: RF08b.
+
+- Given que una especie fue incorporada por sincronización y no tiene período de siembra o cuidados cargados, When completo esos campos, Then quedan guardados y visibles al consultar la especie.
+- Given que ya completé esos campos, When se ejecuta una nueva sincronización (CU05), Then mis datos agronómicos no se pierden ni se sobrescriben.
+
+### HU-08 (obligatoria) — Registrar una observación en la bitácora
+
+**Como** usuario autenticado, **quiero** agregar una nota de observación de campo para una especie, **para** llevar un historial de la evolución de mi cultivo.
+Realiza: RF05, CU02.
+
+- Given que tengo una especie seleccionada, When cargo una nueva entrada con fecha y notas y la guardo, Then aparece en la línea de tiempo de esa especie.
+- Given que ingreso datos en un formato inválido, When intento guardar, Then el sistema muestra un error y no guarda la entrada.
+
+### HU-09 (obligatoria) — Editar o eliminar una entrada de bitácora
+
+**Como** usuario autenticado, **quiero** editar o eliminar mis propias entradas de bitácora, **para** corregir errores o quitar registros que ya no me sirven.
+Realiza: RF06, CU02.
+
+- Given que tengo una entrada propia, When la edito y guardo los cambios, Then la línea de tiempo refleja la versión actualizada.
+- Given que tengo una entrada propia, When la elimino, Then deja de aparecer en la línea de tiempo.
+
+### HU-10 (obligatoria) — Consultar el panel de visualización
+
+**Como** usuario autenticado, **quiero** ver un panel con el resumen de mi stock y el historial de mi bitácora, **para** tener una vista consolidada de mi huerta sin entrar especie por especie.
+Realiza: RF10, RF11, CU03.
+
+- Given que tengo lotes y entradas de bitácora cargados, When abro el panel, Then veo el stock total por especie (destacando las que están en alerta) y puedo entrar a la línea de tiempo de cualquiera de mis especies.
+- Given que todavía no cargué ningún dato, When abro el panel, Then veo un estado vacío informativo, no un error.
+
+### HU-11 (obligatoria) — Filtrar la información del panel
+
+**Como** usuario autenticado, **quiero** filtrar el panel por especie y por rango de fechas, **para** encontrar rápido la información que necesito.
+Realiza: RF12 (corregido — ver nota en Requerimientos funcionales), CU03.
+
+- Given que estoy en el panel, When filtro por una especie puntual, Then veo solo el stock y la bitácora de esa especie.
+- Given que estoy en el panel, When filtro por un rango de fechas, Then la línea de tiempo de bitácora se limita a ese rango.
+
+### HU-12 (obligatoria) — Sincronizar el catálogo de especies
+
+**Como** administrador, **quiero** sincronizar el catálogo de especies con la fuente externa, **para** mantenerlo actualizado sin tener que cargar todo a mano.
+Realiza: RF13, RF00b, CU05.
+
+- Given que soy administrador y tengo conexión a internet, When ejecuto "sincronizar catálogo", Then el sistema agrega las especies nuevas, actualiza los campos de origen externo de las existentes sin pisar los datos agronómicos ya completados, y me muestra un resumen de cuántas se agregaron/actualizaron.
+- Given que la fuente externa no responde, When intento sincronizar, Then el sistema aborta sin modificar el catálogo local y me avisa del error.
+- Given que soy usuario (no administrador), When intento acceder a la opción de sincronizar, Then el sistema no me la habilita.
+
+### HU-13 (diferida a TP2) — Gestionar cuentas de usuario
+
+**Como** administrador, **quiero** dar de alta, baja o modificar cuentas de usuario y su rol, **para** administrar quién accede al sistema.
+Realiza: RF00c, CU04. *No forma parte de la línea base de TP1 — se deja redactada para cuando el grupo retome CU04.*
+
+- Given que soy administrador, When creo una cuenta nueva y le asigno un rol, Then esa cuenta puede iniciar sesión con las funciones de ese rol.
+- Given que intento eliminar la única cuenta administradora, When confirmo la baja, Then el sistema la bloquea.
