@@ -266,7 +266,7 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 **Flujos alternativos/excepción**
 - A1: credenciales inválidas → el sistema muestra un mensaje de error y permite reintentar.
 
-### CU01 (obligatorio): Gestión y predictibilidad de lotes de semillas
+### CU01 (obligatorio): Gestionar y hacer predicciones de lotes de semillas
 
 - **Actor principal:** usuario autenticado. Al ser un MVP de uso personal, no se restringe la carga de stock por perfil profesional: cualquier stakeholder autenticado (agrónomo, técnico o público general) puede operar sobre su propio stock.
 - **Objetivo:** registrar un nuevo lote de semillas, consultar el stock existente y recibir alertas de stock crítico.
