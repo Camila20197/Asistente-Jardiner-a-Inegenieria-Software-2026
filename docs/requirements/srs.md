@@ -61,6 +61,10 @@ la planta. Sus tareas son:
 - Consultar la ficha completa de una especie mientras trabaja con ella.
 Los lotes de semillas y las notas de campo pertenecen únicamente a la cuenta que los
 cargó. El catálogo de especies, en cambio, es compartido (ver Administrador).
+De estas tareas, la línea base de TP1 cubre el registro de lotes de semillas, las
+notas de campo y la consulta por mes de siembra (RF01 a RF06, RF08, RF10 a RF12).
+La carga de fotos por tipo y el calendario mensual de actividades quedan identificados
+a nivel de alcance y diferidos a iteraciones posteriores.
 
 ### 1.4 Propuesta de valor
 Transforma la gestión empírica en un proceso guiado y predecible. Permite la consulta instantánea de semillas viables y consolida el historial del jardin en una visión cronologica accesible.
@@ -135,7 +139,7 @@ flowchart TD
 
 ## Modelo de dominio
 
-Diagrama de clases de dominio derivado de los RF y de la decisión de uso personal: equematiza qué entidades existen, sus atributos y cómo se relacionan, no cómo se implementan.
+Diagrama de clases de dominio derivado de los RF y de la decisión de uso personal: esquematiza qué entidades existen, sus atributos y cómo se relacionan, no cómo se implementan.
 
 ```mermaid
 classDiagram
@@ -174,17 +178,11 @@ classDiagram
         +nota: string
     }
 
-    class ConfiguracionSistema {
-        +umbralStockCritico: int
-    }
-
     Usuario "1" --> "1" RolUsuario : tiene
     Usuario "1" --> "0..*" LoteDeSemilla : posee
     Usuario "1" --> "0..*" EntradaBitacora : es autor de
     Especie "1" --> "0..*" LoteDeSemilla : se agrupa en
     Especie "1" --> "0..*" EntradaBitacora : es objeto de
-
-    note for ConfiguracionSistema "Constante global del sistema.\nEl stock total por especie de un\nusuario (suma de cantidadActual de\nsus LoteDeSemilla de esa especie)\nse compara contra umbralStockCritico\npara disparar RF03."
 ```
 
 ### Diccionario de clases
@@ -196,7 +194,7 @@ classDiagram
 | `Especie` | Ficha de especie: catálogo de referencia, **compartido** entre todos los usuarios, no depende de quién lo cargó. | RF08 |
 | `LoteDeSemilla` | Un lote de semillas de una especie, con su cantidad, año y origen. **Privado**: pertenece a un único `Usuario`. | RF01, RF02, RF03, CU01 |
 | `EntradaBitacora` | Una observación de campo asociada a una especie. **Privada**: pertenece a un único `Usuario` (autor). | RF05, RF06, CU02 |
-| `ConfiguracionSistema` | Valor constante y global del umbral de stock crítico; no varía por especie ni por usuario en TP1. | RF03 |
+
 
 ### Decisiones de modelado 
 
@@ -204,6 +202,12 @@ classDiagram
 - **`RolUsuario` se modela como enumeración de `Usuario`, no como una clase con relaciones propias**, porque RF00b (permisos diferenciados por rol) está diferido: hoy el rol es un dato descriptivo, no un objeto con comportamiento.
 - **No hay una clase para "Visualización" ni "Panel".** CU03 no introduce una entidad de dominio nueva: solo lee y agrega datos que ya existen en `LoteDeSemilla` y `EntradaBitacora`. Es una vista/reporte, no un concepto de negocio persistente.
 - **El "stock total por especie" no es un atributo guardado**, es un valor derivado: suma de `cantidadActual` de los `LoteDeSemilla` de esa especie que pertenecen al usuario. Se recalcula para RF03 y RF11, no se almacena aparte, para evitar inconsistencias entre el valor guardado y la suma real de lotes.
+- **El umbral de stock crítico no se modela como entidad.** Es un valor de
+  configuración global y constante, no un concepto del dominio: no tiene identidad,
+  no se relaciona con ninguna otra entidad y no evoluciona con el negocio. RF03 lo
+  usa como parámetro de comparación contra el stock derivado por especie. Si en un
+  TP posterior el umbral pasara a definirse por especie o por usuario, ahí sí se
+  convertiría en una entidad con relaciones propias.
 
 ## Elección de procesos a desarrollar
 
@@ -245,6 +249,7 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 
 - **RF00b — Control de acceso por rol:** restringir funcionalidades específicas al rol administrador (ej. configuración de umbrales).
 - **RF00c — Gestión de cuentas:** alta, baja y asignación de rol a cuentas de usuario (reemplazado en TP1 por las dos cuentas precargadas).
+- **RF08d — Sincronización del catálogo:** incorporar y actualizar fichas de especie desde una fuente externa (Flora Argentina / GBIF), sin sobrescribir los datos agronómicos completados a mano.
 
 ## Casos de uso
 
@@ -324,7 +329,7 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 2. El sistema muestra el resumen de stock por especie y por lote, destacando las especies bajo el umbral crítico.
 3. El usuario selecciona una especie para ver su historial de bitácora.
 4. El sistema muestra las entradas asociadas, ordenadas cronológicamente.
-5. El usuario aplica filtros (por especie, rango de fechas o usuario que cargó el dato).
+5. El usuario aplica filtros (por especie o por rango de fechas).
 6. El sistema actualiza la vista según los filtros aplicados.
 
 **Postcondición:** el usuario visualizó información consolidada sin modificar datos.
@@ -342,10 +347,10 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 ### CU05 (diferido a un TP posterior): Sincronizar catálogo de especies
 
 - **Actor principal:** administrador.
-- **Objetivo:** actualizar el catálogo local de especies con los datos vigentes de la fuente externa (INTA/INASE).
-- **Realiza:** RF00b.
-- **Precondición:** el administrador ha iniciado sesión (CU00) y el dispositivo tiene conexión a internet 
-- No se implementa en TP1: las dos cuentas precargadas cubren la necesidad mínima de diferenciar roles.
+- **Objetivo:** actualizar el catálogo local de especies con los datos vigentes de una fuente externa (Flora Argentina / GBIF).
+- **Realiza:** RF08d (diferido).
+- **Precondición:** el administrador ha iniciado sesión (CU00) y el dispositivo tiene conexión a internet.
+- No se implementa en TP1: el catálogo se carga manualmente (RF08), lo que evita depender de un servicio externo en la primera línea base.
 
 ## Historias de usuario
 
