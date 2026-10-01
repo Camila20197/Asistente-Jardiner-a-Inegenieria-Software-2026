@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HU-08/09 — Nueva entrada de bitácora</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  :root{--verde-principal:#1B4D3E;--alerta-stock:#D9381E;--fondo:#F8F9FA;--texto:#111111;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Roboto','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;padding-bottom:96px;}
+  h1,h2,h3{font-weight:700;color:var(--texto);}
+  .phone-frame{max-width:430px;margin:0 auto;min-height:100vh;background:var(--fondo);position:relative;box-shadow:0 0 24px rgba(0,0,0,.06);}
+  .navbar-app{background-color:var(--verde-principal);}
+  .navbar-app .navbar-brand,.navbar-app .btn-link{color:#fff!important;}
+  .btn-app-primary{background-color:var(--verde-principal);border-color:var(--verde-principal);color:#fff;min-height:48px;font-size:1rem;font-weight:600;}
+  .btn-app-outline{border:2px solid var(--verde-principal);color:var(--verde-principal);min-height:48px;font-weight:600;background:#fff;}
+  .bottom-bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:#fff;border-top:1px solid #e2e2e2;padding:12px 16px;display:flex;gap:12px;z-index:20;}
+  .bottom-bar .btn{flex:1;}
+  .form-control{min-height:48px;font-size:1rem;}
+  textarea.form-control{min-height:140px;}
+  .form-label{font-weight:600;font-size:.95rem;}
+  .invalid-demo{color:var(--alerta-stock);font-size:.85rem;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <nav class="navbar navbar-app px-3 py-2">
+    <button class="btn btn-link p-0" style="color:#fff;" onclick="location.href='pantalla-hu08-hu09-bitacora-timeline.html'" aria-label="Volver">←</button>
+    <span class="navbar-brand mb-0 h1" style="font-size:1.1rem;">Nueva entrada</span>
+    <span style="width:24px;"></span>
+  </nav>
+
+  <form class="p-3" onsubmit="return false;">
+    <div class="mb-3">
+      <label class="form-label">Especie</label>
+      <input type="text" class="form-control" value="Tomate perita" disabled>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="fecha">Fecha</label>
+      <input type="date" class="form-control" id="fecha">
+      <div class="invalid-demo" id="errorFecha" style="display:none;">Formato de fecha inválido (flujo E1).</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="nota">Notas de campo</label>
+      <textarea class="form-control" id="nota" placeholder="Describí lo que observaste: crecimiento, plagas, floración, riego..."></textarea>
+    </div>
+
+    <button type="button" class="btn btn-link p-0 mb-2" style="font-size:.85rem;color:#6b7280;text-decoration:underline;"
+      onclick="document.getElementById('errorFecha').style.display='block'">
+      Simular error de formato (E1)
+    </button>
+  </form>
+
+  <div class="bottom-bar">
+    <button class="btn btn-app-outline" onclick="location.href='pantalla-hu08-hu09-bitacora-timeline.html'">Cancelar</button>
+    <button class="btn btn-app-primary" onclick="location.href='pantalla-hu08-hu09-bitacora-timeline.html'">Guardar entrada</button>
+  </div>
+</div>
+</body>
+</html>
