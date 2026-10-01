@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HU-06 — Alta/edición de ficha de especie</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  :root{--verde-principal:#1B4D3E;--alerta-stock:#D9381E;--fondo:#F8F9FA;--texto:#111111;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Roboto','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;padding-bottom:96px;}
+  h1,h2,h3{font-weight:700;color:var(--texto);}
+  h2{font-size:1.1rem;margin-top:20px;}
+  .phone-frame{max-width:430px;margin:0 auto;min-height:100vh;background:var(--fondo);position:relative;box-shadow:0 0 24px rgba(0,0,0,.06);}
+  .navbar-app{background-color:var(--verde-principal);}
+  .navbar-app .navbar-brand,.navbar-app .btn-link{color:#fff!important;}
+  .btn-app-primary{background-color:var(--verde-principal);border-color:var(--verde-principal);color:#fff;min-height:48px;font-size:1rem;font-weight:600;}
+  .btn-app-outline{border:2px solid var(--verde-principal);color:var(--verde-principal);min-height:48px;font-weight:600;background:#fff;}
+  .btn-sm-outline{border:1.5px solid var(--verde-principal);color:var(--verde-principal);background:#fff;font-size:.8rem;min-height:40px;}
+  .bottom-bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:#fff;border-top:1px solid #e2e2e2;padding:12px 16px;display:flex;gap:12px;z-index:20;}
+  .bottom-bar .btn{flex:1;}
+  .form-control,.form-select{min-height:48px;font-size:1rem;}
+  textarea.form-control{min-height:70px;}
+  .form-label{font-weight:600;font-size:.95rem;}
+  .opcional{font-weight:400;color:#6b7280;font-size:.8rem;}
+  .preview-box{background:#f3f4f6;border-radius:8px;padding:8px 12px;font-size:.9rem;margin-top:4px;}
+  .card-app{border:1px solid #e5e7eb;border-radius:12px;}
+  .foto-slot{aspect-ratio:1;border:2px dashed #d1d5db;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#9ca3af;}
+  .foto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .foto-label{font-size:.7rem;text-align:center;color:#6b7280;margin-top:2px;}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <nav class="navbar navbar-app px-3 py-2">
+    <button class="btn btn-link p-0" style="color:#fff;" onclick="history.back()" aria-label="Volver">←</button>
+    <span class="navbar-brand mb-0 h1" style="font-size:1.1rem;">Ficha de especie</span>
+    <span style="width:24px;"></span>
+  </nav>
+
+  <form class="p-3" onsubmit="return false;">
+    <div class="alert alert-secondary" style="font-size:.75rem;">
+      Alta incremental: solo Identidad es obligatoria al crear. Todo lo demás se puede completar más adelante, a medida que se consigue la información (decisión de la clienta).
+    </div>
+
+    <h2 class="mt-0">Identidad <span class="opcional">(obligatoria)</span></h2>
+    <div class="mb-2">
+      <label class="form-label" for="nombreComun">Nombre común</label>
+      <input type="text" class="form-control" id="nombreComun" value="Tomate perita">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="genero">Género</label>
+      <input type="text" class="form-control" id="genero" value="Solanum" placeholder="se muestra en cursiva">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="epiteto">Epíteto</label>
+      <input type="text" class="form-control" id="epiteto" value="lycopersicum" placeholder="se muestra en cursiva">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="autor">Autor <span class="opcional">(opcional)</span></label>
+      <input type="text" class="form-control" id="autor" value="L." placeholder="texto normal, sin cursiva">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="variedad">Variedad <span class="opcional">(opcional)</span></label>
+      <input type="text" class="form-control" id="variedad" value="Perita" placeholder="se muestra entre comillas simples">
+    </div>
+    <div class="preview-box">Vista previa: <em>Solanum lycopersicum</em> L. 'Perita'</div>
+
+    <div class="mb-2 mt-3">
+      <label class="form-label" for="familia">Familia</label>
+      <input type="text" class="form-control" id="familia" value="Solanaceae">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="origenEsp">Origen</label>
+      <input type="text" class="form-control" id="origenEsp" value="Región andina de Sudamérica">
+    </div>
+
+    <h2>Cuidados <span class="opcional">(todos opcionales)</span></h2>
+    <div class="mb-2">
+      <label class="form-label" for="cuidadosBasicos">Cuidados básicos</label>
+      <textarea class="form-control" id="cuidadosBasicos">Riego moderado, sol pleno.</textarea>
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="cuidadosFrio">Cuidados del frío</label>
+      <textarea class="form-control" id="cuidadosFrio" placeholder="dejar vacío hasta tener el dato"></textarea>
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="cuidadosTrasplante">Trasplante</label>
+      <textarea class="form-control" id="cuidadosTrasplante" placeholder="dejar vacío hasta tener el dato"></textarea>
+    </div>
+
+    <h2>Reproducción <span class="opcional">(opcional)</span></h2>
+    <div class="mb-2">
+      <label class="form-label" for="reproSexual">Sexual</label>
+      <input type="text" class="form-control" id="reproSexual" placeholder="ej: por semilla, 7-14 días">
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="reproAsexual">Asexual <span class="opcional">(texto libre, puede combinar métodos)</span></label>
+      <input type="text" class="form-control" id="reproAsexual" placeholder="ej: injerto, esqueje, división, acodo">
+    </div>
+
+    <h2>Actividades de calendario <span class="opcional">(agregar las que apliquen)</span></h2>
+    <div class="card card-app p-2 mb-2">
+      <div class="row g-2 align-items-end">
+        <div class="col-5">
+          <label class="form-label" style="font-size:.8rem;">Tipo</label>
+          <select class="form-select">
+            <option>Siembra</option>
+            <option>Tratamiento pregerminativo</option>
+            <option>Trasplante</option>
+            <option>Poda</option>
+            <option>Fertilización</option>
+            <option>Reproducción asexual</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label class="form-label" style="font-size:.8rem;">Desde</label>
+          <select class="form-select"><option>Jul</option></select>
+        </div>
+        <div class="col-3">
+          <label class="form-label" style="font-size:.8rem;">Hasta</label>
+          <select class="form-select"><option>Sep</option></select>
+        </div>
+        <div class="col-1"><button type="button" class="btn btn-sm-outline p-1">✕</button></div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-sm-outline w-100 mb-2">+ Agregar actividad</button>
+    <p class="text-secondary" style="font-size:.8rem;">El tratamiento pregerminativo se carga como una actividad más, con su propio rango de meses antes de la siembra (pedido explícito de la clienta).</p>
+
+    <h2>Problemas fitosanitarios <span class="opcional">(texto libre, sin catálogo compartido)</span></h2>
+    <div class="card card-app p-2 mb-2">
+      <input type="text" class="form-control mb-2" placeholder="Nombre de la plaga o enfermedad" value="Mosca blanca">
+      <textarea class="form-control" placeholder="Tratamientos, del más suave al más fuerte (ej: jabón potásico, aceite de neem, imidacloprid)">Jabón potásico; aceite de neem; imidacloprid (último recurso)</textarea>
+    </div>
+    <button type="button" class="btn btn-sm-outline w-100 mb-2">+ Agregar problema fitosanitario</button>
+
+    <h2>Fotos <span class="opcional">(opcional, varias por tipo)</span></h2>
+    <div class="foto-grid">
+      <div><div class="foto-slot">🌿</div><div class="foto-label">Planta completa</div></div>
+      <div><div class="foto-slot">🍃</div><div class="foto-label">Hoja</div></div>
+      <div><div class="foto-slot">🌸</div><div class="foto-label">Flor</div></div>
+      <div><div class="foto-slot">🍅</div><div class="foto-label">Fruto</div></div>
+      <div><div class="foto-slot">🌰</div><div class="foto-label">Semilla</div></div>
+      <div><div class="foto-slot" style="border-style:solid;color:var(--verde-principal);">＋</div><div class="foto-label">Agregar</div></div>
+    </div>
+  </form>
+
+  <div class="bottom-bar">
+    <button class="btn btn-app-outline" onclick="history.back()">Cancelar</button>
+    <button class="btn btn-app-primary" onclick="location.href='pantalla-ficha-especie-vista.html'">Guardar</button>
+  </div>
+</div>
+</body>
+</html>
