@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HU-05 — Catálogo de especies por mes</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  :root{--verde-principal:#1B4D3E;--alerta-stock:#D9381E;--fondo:#F8F9FA;--texto:#111111;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Roboto','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;padding-bottom:96px;}
+  h1,h2,h3{font-weight:700;color:var(--texto);}
+  h2{font-size:1.05rem;margin-top:16px;}
+  .phone-frame{max-width:430px;margin:0 auto;min-height:100vh;background:var(--fondo);position:relative;box-shadow:0 0 24px rgba(0,0,0,.06);}
+  .navbar-app{background-color:var(--verde-principal);}
+  .navbar-app .navbar-brand,.navbar-app .btn-link{color:#fff!important;}
+  .mes-chip{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;border-radius:24px;border:2px solid var(--verde-principal);color:var(--verde-principal);background:#fff;font-weight:600;margin-right:8px;font-size:.85rem;flex-shrink:0;}
+  .mes-chip.activo{background:var(--verde-principal);color:#fff;}
+  .chip-row{display:flex;overflow-x:auto;padding-bottom:8px;gap:4px;}
+  .card-app{border:1px solid #e5e7eb;border-radius:12px;}
+  .especie-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;}
+  .especie-item:last-child{border-bottom:none;}
+  .rango{font-size:.75rem;color:#6b7280;}
+  .nombre-cientifico-mini em{font-style:italic;}
+  .fab{position:fixed;bottom:24px;right:calc(50% - 215px + 16px);width:56px;height:56px;border-radius:50%;background:var(--verde-principal);color:#fff;border:none;font-size:1.5rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:20;}
+  .estado-vacio{text-align:center;color:#6b7280;padding:32px 16px;}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <nav class="navbar navbar-app px-3 py-2">
+    <button class="btn btn-link p-0" style="color:#fff;" onclick="location.href='pantalla-hu10-hu11-panel.html'" aria-label="Volver">←</button>
+    <span class="navbar-brand mb-0 h1" style="font-size:1.1rem;">Catálogo de especies</span>
+    <span style="width:24px;"></span>
+  </nav>
+
+  <div class="p-3">
+    <input type="search" class="form-control mb-3" placeholder="Buscar especie..." style="min-height:48px;">
+
+    <p class="form-label mb-2">Mes</p>
+    <div class="chip-row mb-3">
+      <span class="mes-chip">Ene</span><span class="mes-chip">Feb</span><span class="mes-chip">Mar</span>
+      <span class="mes-chip">Abr</span><span class="mes-chip">May</span><span class="mes-chip activo">Jun</span>
+      <span class="mes-chip">Jul</span><span class="mes-chip">Ago</span><span class="mes-chip">Sep</span>
+      <span class="mes-chip">Oct</span><span class="mes-chip">Nov</span><span class="mes-chip">Dic</span>
+    </div>
+
+    <p class="text-secondary" style="font-size:.8rem;">
+      Para Junio se listan las especies con alguna actividad ese mes, agrupadas por tipo (dato nuevo: cada especie puede tener varias actividades con su propio rango de meses — siembra, tratamiento pregerminativo, poda, fertilización, trasplante, reproducción asexual).
+    </p>
+
+    <h2>Poda</h2>
+    <div class="card card-app p-2 mb-2">
+      <div class="especie-item">
+        <div>
+          <div class="nombre-cientifico-mini"><em>Vitis vinifera</em></div>
+          <div class="text-secondary" style="font-size:.85rem;">Vid</div>
+        </div>
+        <span class="rango">jun – jul</span>
+      </div>
+    </div>
+
+    <h2>Tratamiento pregerminativo</h2>
+    <div class="card card-app p-2 mb-2">
+      <div class="especie-item">
+        <div>
+          <div class="nombre-cientifico-mini"><em>Prunus persica</em></div>
+          <div class="text-secondary" style="font-size:.85rem;">Durazno</div>
+        </div>
+        <span class="rango">may – jun</span>
+      </div>
+    </div>
+
+    <h2>Reproducción asexual</h2>
+    <div class="card card-app p-2 mb-2">
+      <div class="especie-item">
+        <div>
+          <div class="nombre-cientifico-mini"><em>Fragaria</em> × <em>ananassa</em></div>
+          <div class="text-secondary" style="font-size:.85rem;">Frutilla · por estolones</div>
+        </div>
+        <span class="rango">jun – ago</span>
+      </div>
+    </div>
+
+    <h2>Siembra</h2>
+    <div class="estado-vacio card-app">
+      <p class="mb-0" style="font-size:.9rem;">Ninguna especie tiene siembra programada para este mes.</p>
+    </div>
+  </div>
+
+  <button class="fab" onclick="location.href='pantalla-hu06-alta-especie.html'" aria-label="Dar de alta especie">+</button>
+</div>
+</body>
+</html>
