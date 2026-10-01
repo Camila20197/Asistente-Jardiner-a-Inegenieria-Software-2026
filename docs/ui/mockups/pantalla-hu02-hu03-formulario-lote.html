@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HU-02/03 — Alta/edición de lote</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  :root{--verde-principal:#1B4D3E;--alerta-stock:#D9381E;--fondo:#F8F9FA;--texto:#111111;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Roboto','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;padding-bottom:96px;}
+  h1,h2,h3{font-weight:700;color:var(--texto);}
+  h2{font-size:1.4rem;}
+  .phone-frame{max-width:430px;margin:0 auto;min-height:100vh;background:var(--fondo);position:relative;box-shadow:0 0 24px rgba(0,0,0,.06);}
+  .navbar-app{background-color:var(--verde-principal);}
+  .navbar-app .navbar-brand,.navbar-app .btn-link{color:#fff!important;}
+  .btn-app-primary{background-color:var(--verde-principal);border-color:var(--verde-principal);color:#fff;min-height:48px;font-size:1rem;font-weight:600;}
+  .btn-app-primary:hover{background-color:#153f33;border-color:#153f33;color:#fff;}
+  .btn-app-outline{border:2px solid var(--verde-principal);color:var(--verde-principal);min-height:48px;font-weight:600;background:#fff;}
+  .bottom-bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:#fff;border-top:1px solid #e2e2e2;padding:12px 16px;display:flex;gap:12px;z-index:20;}
+  .bottom-bar .btn{flex:1;}
+  .form-control,.form-select{min-height:48px;font-size:1rem;}
+  .form-label{font-weight:600;font-size:.95rem;}
+  .tap-target-48{min-width:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;}
+  .invalid-demo{color:var(--alerta-stock);font-size:.85rem;margin-top:4px;}
+  .opcional{font-weight:400;color:#6b7280;font-size:.8rem;}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <nav class="navbar navbar-app px-3 py-2">
+    <button class="btn btn-link tap-target-48 p-0" onclick="location.href='pantalla-hu02-hu03-hu04-listado-lotes.html'" aria-label="Volver">←</button>
+    <span class="navbar-brand mb-0 h1" style="font-size:1.1rem;">Nuevo lote</span>
+    <span style="width:48px;"></span>
+  </nav>
+
+  <form class="p-3" onsubmit="return false;">
+    <div class="mb-3">
+      <label class="form-label">Especie</label>
+      <input type="text" class="form-control" value="Tomate perita" disabled>
+      <div class="form-text">Se carga desde la ficha de la especie de la que venís.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="cantidad">Cantidad inicial</label>
+      <input type="number" class="form-control" id="cantidad" placeholder="ej: 25" min="1">
+      <div class="invalid-demo" id="errorCantidad" style="display:none;">La cantidad debe ser mayor a cero (flujo A1).</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="anio">Año de cosecha</label>
+      <input type="number" class="form-control" id="anio" placeholder="ej: 2025" max="2026">
+      <div class="invalid-demo" id="errorAnio" style="display:none;">El año no puede ser posterior al actual (flujo A2).</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="mes">Mes de cosecha <span class="opcional">(opcional — dato nuevo)</span></label>
+      <select class="form-select" id="mes">
+        <option value="">Sin especificar</option>
+        <option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option>
+        <option>Mayo</option><option>Junio</option><option>Julio</option><option selected>Agosto</option>
+        <option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="procedencia">Procedencia</label>
+      <input type="text" class="form-control" id="procedencia" placeholder="ej: vivero El Ceibo, cosecha propia">
+    </div>
+
+    <button type="button" class="link-demo btn btn-link p-0 mb-2" style="font-size:.85rem;color:#6b7280;text-decoration:underline;"
+      onclick="document.getElementById('errorCantidad').style.display='block'; document.getElementById('errorAnio').style.display='block';">
+      Simular errores de validación (A1 / A2)
+    </button>
+
+    <hr>
+    <h2 style="font-size:1.1rem;">Dar de baja este lote</h2>
+    <p class="text-secondary" style="font-size:.85rem;">Solo visible al editar un lote existente. El lote deja de contarse en el stock total pero conserva su historial (HU-03).</p>
+    <button type="button" class="btn btn-outline-danger w-100 mb-3">Dar de baja lote</button>
+  </form>
+
+  <div class="bottom-bar">
+    <button class="btn btn-app-outline" onclick="location.href='pantalla-hu02-hu03-hu04-listado-lotes.html'">Cancelar</button>
+    <button class="btn btn-app-primary" onclick="location.href='pantalla-hu02-hu03-hu04-listado-lotes.html'">Guardar</button>
+  </div>
+</div>
+</body>
+</html>
