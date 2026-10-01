@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HU-01 — Iniciar sesión</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  :root{--verde-principal:#1B4D3E;--alerta-stock:#D9381E;--fondo:#F8F9FA;--texto:#111111;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Roboto','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;}
+  h1,h2,h3{font-weight:700;color:var(--texto);}
+  h1{font-size:1.75rem;} h2{font-size:1.4rem;} h3{font-size:1.25rem;}
+  .phone-frame{max-width:430px;margin:0 auto;min-height:100vh;background:var(--fondo);box-shadow:0 0 24px rgba(0,0,0,.06);display:flex;flex-direction:column;justify-content:center;padding:32px 24px;}
+  .btn-app-primary{background-color:var(--verde-principal);border-color:var(--verde-principal);color:#fff;min-height:48px;font-size:1rem;font-weight:600;width:100%;}
+  .btn-app-primary:hover,.btn-app-primary:focus{background-color:#153f33;border-color:#153f33;color:#fff;}
+  .form-control{min-height:48px;font-size:1rem;}
+  .form-label{font-weight:600;font-size:.95rem;}
+  .logo-badge{width:64px;height:64px;border-radius:16px;background:var(--verde-principal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.75rem;margin:0 auto 16px;}
+  .link-demo{font-size:.85rem;color:#6b7280;text-decoration:underline;background:none;border:none;padding:0;}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="text-center mb-4">
+    <div class="logo-badge">🌱</div>
+    <h1>Asistente de Jardinería</h1>
+    <p class="text-secondary mb-0">Iniciá sesión para llevar tu registro</p>
+  </div>
+
+  <form onsubmit="return false;">
+    <div class="mb-3">
+      <label class="form-label" for="usuario">Usuario</label>
+      <input type="text" class="form-control" id="usuario" placeholder="tu usuario">
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="clave">Contraseña</label>
+      <input type="password" class="form-control" id="clave" placeholder="••••••••">
+    </div>
+
+    <div id="alertaError" class="alert alert-danger d-none" role="alert">
+      Usuario o contraseña incorrectos. Probá de nuevo.
+    </div>
+
+    <button type="button" class="btn btn-app-primary mt-2" onclick="document.getElementById('alertaError').classList.add('d-none')">Ingresar</button>
+
+    <div class="text-center mt-4">
+      <button type="button" class="link-demo" onclick="document.getElementById('alertaError').classList.remove('d-none')">
+        Simular error de credenciales (flujo A1)
+      </button>
+    </div>
+  </form>
+
+  <p class="text-center text-secondary mt-4" style="font-size:.8rem;">
+    HU-01 · CU00 — Iniciar sesión · RF00
+  </p>
+</div>
+</body>
+</html>
