@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HU-08/09 — Bitácora, línea de tiempo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  :root{--verde-principal:#1B4D3E;--fondo:#F8F9FA;--texto:#111111;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Roboto','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;padding-bottom:96px;}
+  h1,h2,h3{font-weight:700;color:var(--texto);}
+  .phone-frame{max-width:430px;margin:0 auto;min-height:100vh;background:var(--fondo);position:relative;box-shadow:0 0 24px rgba(0,0,0,.06);}
+  .navbar-app{background-color:var(--verde-principal);}
+  .navbar-app .navbar-brand,.navbar-app .btn-link{color:#fff!important;}
+  .btn-app-primary{background-color:var(--verde-principal);border-color:var(--verde-principal);color:#fff;min-height:48px;font-size:1rem;font-weight:600;}
+  .bottom-bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:#fff;border-top:1px solid #e2e2e2;padding:12px 16px;z-index:20;}
+  .bottom-bar .btn{width:100%;}
+  .timeline{border-left:3px solid var(--verde-principal);padding-left:16px;margin-left:8px;}
+  .timeline-item{position:relative;margin-bottom:20px;}
+  .timeline-item::before{content:'';position:absolute;left:-22px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--verde-principal);}
+  .card-app{border:1px solid #e5e7eb;border-radius:12px;}
+  .tap-target-48{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
+  .sync-pill{font-size:.75rem;padding:2px 10px;border-radius:999px;background:#fff3cd;color:#7a5b00;display:inline-flex;align-items:center;gap:4px;}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <nav class="navbar navbar-app px-3 py-2">
+    <button class="btn btn-link p-0" style="color:#fff;" onclick="location.href='pantalla-hu10-hu11-panel.html'" aria-label="Volver">←</button>
+    <span class="navbar-brand mb-0 h1" style="font-size:1.1rem;">Bitácora · Tomate perita</span>
+    <span style="width:24px;"></span>
+  </nav>
+
+  <div class="p-3">
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="card card-app p-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <strong>12 de marzo, 2026</strong>
+            <span class="sync-pill">⏳ Sin sincronizar</span>
+          </div>
+          <p class="mb-2 mt-1">Brotaron las primeras hojas verdaderas. Se ven sanas, sin manchas.</p>
+          <div class="d-flex gap-3">
+            <button class="btn btn-sm btn-outline-secondary tap-target-48" aria-label="Editar">✏️</button>
+            <button class="btn btn-sm btn-outline-danger tap-target-48" aria-label="Eliminar">🗑️</button>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="card card-app p-3">
+          <strong>2 de marzo, 2026</strong>
+          <p class="mb-2 mt-1">Trasplante a maceta individual. Sustrato con compost propio.</p>
+          <div class="d-flex gap-3">
+            <button class="btn btn-sm btn-outline-secondary tap-target-48" aria-label="Editar">✏️</button>
+            <button class="btn btn-sm btn-outline-danger tap-target-48" aria-label="Eliminar">🗑️</button>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="card card-app p-3">
+          <strong>20 de febrero, 2026</strong>
+          <p class="mb-0 mt-1">Germinación completa, 8 de 10 semillas del lote #14.</p>
+        </div>
+      </div>
+    </div>
+    <p class="text-secondary text-center mt-3" style="font-size:.8rem;">
+      El indicador "Sin sincronizar" refleja la decisión del grupo de contemplar el trabajo offline en el diseño (ver nota de RNF en el perfil de usuario).
+    </p>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-app-primary" onclick="location.href='pantalla-hu08-hu09-formulario-entrada.html'">+ Nueva entrada</button>
+  </div>
+</div>
+</body>
+</html>
