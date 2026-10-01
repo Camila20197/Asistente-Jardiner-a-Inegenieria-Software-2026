@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HU-10/11 — Panel de visualización</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  :root{--verde-principal:#1B4D3E;--alerta-stock:#D9381E;--fondo:#F8F9FA;--texto:#111111;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Roboto','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;padding-bottom:96px;}
+  h1,h2,h3{font-weight:700;color:var(--texto);}
+  h2{font-size:1.3rem;}
+  .phone-frame{max-width:430px;margin:0 auto;min-height:100vh;background:var(--fondo);position:relative;box-shadow:0 0 24px rgba(0,0,0,.06);}
+  .navbar-app{background-color:var(--verde-principal);}
+  .navbar-app .navbar-brand{color:#fff!important;}
+  .btn-app-outline{border:2px solid var(--verde-principal);color:var(--verde-principal);min-height:48px;font-weight:600;background:#fff;}
+  .card-app{border:1px solid #e5e7eb;border-radius:12px;}
+  .badge-alerta{background-color:var(--alerta-stock);color:#fff;font-weight:600;}
+  .stat-card{background:var(--verde-principal);color:#fff;border-radius:12px;padding:16px;}
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:#fff;border-top:1px solid #e2e2e2;display:flex;z-index:20;}
+  .bottom-nav a{flex:1;text-align:center;padding:12px 4px;font-size:.75rem;color:#6b7280;text-decoration:none;min-height:48px;}
+  .bottom-nav a.activo{color:var(--verde-principal);font-weight:700;}
+  .bottom-nav .icono{font-size:1.25rem;display:block;}
+  .filtros{background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:12px;}
+  .form-select,.form-control{min-height:44px;font-size:.95rem;}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <nav class="navbar navbar-app px-3 py-2">
+    <span class="navbar-brand mb-0 h1" style="font-size:1.15rem;">Mi huerta</span>
+  </nav>
+
+  <div class="p-3">
+    <div class="stat-card mb-3">
+      <div style="font-size:.85rem;opacity:.85;">Especies con stock bajo</div>
+      <div style="font-size:2rem;font-weight:700;">2</div>
+      <div style="font-size:.8rem;">de 6 especies con lotes registrados</div>
+    </div>
+
+    <div class="filtros mb-3">
+      <div class="row g-2">
+        <div class="col-6">
+          <label class="form-label" style="font-size:.8rem;font-weight:600;">Especie</label>
+          <select class="form-select">
+            <option>Todas</option>
+            <option>Tomate perita</option>
+            <option>Acelga</option>
+          </select>
+        </div>
+        <div class="col-6">
+          <label class="form-label" style="font-size:.8rem;font-weight:600;">Rango de fechas</label>
+          <select class="form-select">
+            <option>Últimos 30 días</option>
+            <option>Última temporada</option>
+            <option>Todo</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <h2>Stock por especie</h2>
+    <div class="card card-app p-3 mb-2 d-flex flex-row justify-content-between align-items-center">
+      <div>
+        <strong>Tomate perita</strong>
+        <div class="text-secondary" style="font-size:.85rem;">3 semillas · 1 lote activo</div>
+      </div>
+      <span class="badge badge-alerta">Bajo</span>
+    </div>
+    <div class="card card-app p-3 mb-2 d-flex flex-row justify-content-between align-items-center">
+      <div>
+        <strong>Acelga</strong>
+        <div class="text-secondary" style="font-size:.85rem;">40 semillas · 2 lotes activos</div>
+      </div>
+      <span class="badge bg-success">OK</span>
+    </div>
+
+    <h2 class="mt-4">Bitácora reciente</h2>
+    <div class="card card-app p-3 mb-2">
+      <strong>Tomate perita</strong> — 12 de marzo, 2026
+      <p class="mb-0 text-secondary" style="font-size:.9rem;">Brotaron las primeras hojas verdaderas...</p>
+    </div>
+
+    <hr class="my-4">
+    <p class="text-secondary text-center" style="font-size:.85rem;">Ejemplo de estado vacío (sin datos cargados aún):</p>
+    <div class="text-center text-secondary card-app p-4">
+      <div style="font-size:2rem;">🪴</div>
+      <p class="mb-0">Todavía no cargaste lotes ni entradas de bitácora.</p>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="pantalla-hu10-hu11-panel.html" class="activo"><span class="icono">📊</span>Panel</a>
+    <a href="pantalla-hu02-hu03-hu04-listado-lotes.html"><span class="icono">🌱</span>Lotes</a>
+    <a href="pantalla-hu05-catalogo-especies.html"><span class="icono">📖</span>Catálogo</a>
+    <a href="pantalla-hu08-hu09-bitacora-timeline.html"><span class="icono">📝</span>Bitácora</a>
+  </nav>
+</div>
+</body>
+</html>
