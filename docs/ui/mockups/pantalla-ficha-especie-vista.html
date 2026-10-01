@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de especie — vista</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  :root{--verde-principal:#1B4D3E;--alerta-stock:#D9381E;--fondo:#F8F9FA;--texto:#111111;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Roboto','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;padding-bottom:96px;}
+  h1,h2,h3{font-weight:700;color:var(--texto);}
+  h2{font-size:1.25rem;margin-top:24px;}
+  .phone-frame{max-width:430px;margin:0 auto;min-height:100vh;background:var(--fondo);position:relative;box-shadow:0 0 24px rgba(0,0,0,.06);}
+  .navbar-app{background-color:var(--verde-principal);}
+  .navbar-app .navbar-brand,.navbar-app .btn-link{color:#fff!important;}
+  .btn-app-primary{background-color:var(--verde-principal);border-color:var(--verde-principal);color:#fff;min-height:48px;font-size:1rem;font-weight:600;}
+  .btn-app-outline{border:2px solid var(--verde-principal);color:var(--verde-principal);min-height:44px;font-weight:600;background:#fff;font-size:.85rem;}
+  .bottom-bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:#fff;border-top:1px solid #e2e2e2;padding:12px 16px;display:flex;gap:8px;z-index:20;}
+  .bottom-bar .btn{flex:1;font-size:.8rem;padding:8px 4px;}
+  .card-app{border:1px solid #e5e7eb;border-radius:12px;}
+  .nombre-cientifico{font-size:1.1rem;}
+  .nombre-cientifico em{font-style:italic;}
+  .pendiente{color:#9ca3af;font-style:italic;font-size:.9rem;}
+  .foto-slot{aspect-ratio:1;border:2px dashed #d1d5db;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.7rem;color:#6b7280;text-align:center;padding:4px;}
+  .foto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .actividad-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;}
+  .plaga-card{border-left:4px solid var(--alerta-stock);padding:8px 12px;background:#fdf2f1;border-radius:0 8px 8px 0;margin-bottom:8px;}
+  .tratamiento-chip{display:inline-block;font-size:.75rem;padding:2px 8px;border-radius:999px;margin:2px 4px 2px 0;}
+  .t-biologico{background:#e6f4ea;color:#1e6b34;}
+  .t-quimico{background:#fdecea;color:#8a2a1e;}
+  .badge-stock-si{background:#1e6b34;color:#fff;}
+  .badge-stock-no{background:#9ca3af;color:#fff;}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <nav class="navbar navbar-app px-3 py-2">
+    <button class="btn btn-link p-0" style="color:#fff;" onclick="location.href='pantalla-hu05-catalogo-especies.html'" aria-label="Volver">←</button>
+    <span class="navbar-brand mb-0 h1" style="font-size:1.1rem;">Ficha de especie</span>
+    <button class="btn btn-link p-0" style="color:#fff;" onclick="location.href='pantalla-hu06-alta-especie.html'" aria-label="Editar">✏️</button>
+  </nav>
+
+  <div class="p-3">
+    <div class="alert alert-secondary" style="font-size:.75rem;">
+      Contenido enriquecido a partir de la entrevista con la clienta — pendiente de formalizar como RF/HU en el SRS antes de la entrega final.
+    </div>
+
+    <div class="nombre-cientifico"><em>Solanum lycopersicum</em> L. 'Perita'</div>
+    <div class="text-secondary">Tomate perita · Solanaceae</div>
+    <div class="text-secondary" style="font-size:.85rem;">Origen: región andina de Sudamérica · Ficha creada: 15/01/2026</div>
+
+    <h2>Existencia</h2>
+    <div class="card card-app p-3 d-flex flex-row justify-content-between align-items-center">
+      <span>Semillas en stock</span>
+      <span class="badge badge-stock-si">Sí · 2 lotes</span>
+    </div>
+    <button class="btn btn-app-outline w-100 mt-2" onclick="location.href='pantalla-hu02-hu03-hu04-listado-lotes.html'">Ver lotes de esta especie</button>
+
+    <h2>Cuidados <span class="pendiente" style="font-size:.75rem;">(carga incremental, ninguno es obligatorio)</span></h2>
+    <div class="card card-app p-3 mb-2">
+      <strong style="font-size:.85rem;">Cuidados básicos</strong>
+      <p class="mb-0" style="font-size:.9rem;">Riego moderado, sol pleno.</p>
+    </div>
+    <div class="card card-app p-3 mb-2">
+      <strong style="font-size:.85rem;">Cuidados del frío</strong>
+      <p class="mb-0" style="font-size:.9rem;">Sensible a heladas; proteger con manta antihelada por debajo de 5°C.</p>
+    </div>
+    <div class="card card-app p-3 mb-2">
+      <strong style="font-size:.85rem;">Trasplante</strong>
+      <p class="pendiente mb-0">Todavía sin completar.</p>
+    </div>
+
+    <h2>Reproducción</h2>
+    <div class="card card-app p-3 mb-2">
+      <strong style="font-size:.85rem;">Sexual</strong>
+      <p class="mb-0" style="font-size:.9rem;">Por semilla, germinación en 7 a 14 días.</p>
+      <strong style="font-size:.85rem;">Asexual</strong>
+      <p class="pendiente mb-0">No suele reproducirse por esta vía.</p>
+    </div>
+
+    <h2>Calendario de actividades</h2>
+    <div class="card card-app p-3">
+      <div class="actividad-row"><span>🌱 Siembra</span><span class="text-secondary" style="font-size:.85rem;">jul – sep</span></div>
+      <div class="actividad-row"><span>🪴 Trasplante</span><span class="text-secondary" style="font-size:.85rem;">oct – nov</span></div>
+      <div class="actividad-row" style="border-bottom:none;"><span>✂️ Poda</span><span class="text-secondary" style="font-size:.85rem;">mar – abr</span></div>
+    </div>
+
+    <h2>Problemas fitosanitarios</h2>
+    <div class="plaga-card">
+      <strong>Mosca blanca</strong>
+      <div class="mt-1">
+        <span class="tratamiento-chip t-biologico">1. Jabón potásico</span>
+        <span class="tratamiento-chip t-biologico">2. Aceite de neem</span>
+        <span class="tratamiento-chip t-quimico">3. Imidacloprid (último recurso)</span>
+      </div>
+    </div>
+    <div class="plaga-card">
+      <strong>Tizón tardío</strong>
+      <div class="mt-1">
+        <span class="tratamiento-chip t-biologico">1. Rotación de cultivos</span>
+        <span class="tratamiento-chip t-quimico">2. Caldo bordelés</span>
+      </div>
+    </div>
+
+    <h2>Fotos</h2>
+    <div class="foto-grid">
+      <div class="foto-slot">🌿<br>Planta completa (2)</div>
+      <div class="foto-slot">🍃<br>Hoja (1)</div>
+      <div class="foto-slot" style="border-color:#fbbf24;color:#92610a;">🌸<br>Flor — sin fotos</div>
+      <div class="foto-slot">🍅<br>Fruto (3)</div>
+      <div class="foto-slot">🌰<br>Semilla (1)</div>
+      <div class="foto-slot" style="cursor:pointer;">＋<br>Agregar foto</div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-app-outline" onclick="location.href='pantalla-hu08-hu09-bitacora-timeline.html'">Ver bitácora</button>
+    <button class="btn btn-app-primary" onclick="location.href='pantalla-hu06-alta-especie.html'">Editar ficha</button>
+  </div>
+</div>
+</body>
+</html>
