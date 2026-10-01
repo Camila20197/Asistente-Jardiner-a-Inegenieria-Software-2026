@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HU-02/03/04 — Lotes por especie</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  :root{--verde-principal:#1B4D3E;--alerta-stock:#D9381E;--fondo:#F8F9FA;--texto:#111111;}
+  body{background:var(--fondo);color:var(--texto);font-family:'Roboto','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;padding-bottom:96px;}
+  h1,h2,h3{font-weight:700;color:var(--texto);}
+  h2{font-size:1.4rem;}
+  .phone-frame{max-width:430px;margin:0 auto;min-height:100vh;background:var(--fondo);position:relative;box-shadow:0 0 24px rgba(0,0,0,.06);}
+  .navbar-app{background-color:var(--verde-principal);}
+  .navbar-app .navbar-brand,.navbar-app .btn-link{color:#fff!important;}
+  .btn-app-primary{background-color:var(--verde-principal);border-color:var(--verde-principal);color:#fff;min-height:48px;min-width:48px;font-size:1rem;font-weight:600;}
+  .btn-app-primary:hover{background-color:#153f33;border-color:#153f33;color:#fff;}
+  .btn-app-outline{border:2px solid var(--verde-principal);color:var(--verde-principal);min-height:48px;min-width:48px;font-weight:600;background:#fff;}
+  .badge-alerta{background-color:var(--alerta-stock);color:#fff;font-weight:600;}
+  .bottom-bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:#fff;border-top:1px solid #e2e2e2;padding:12px 16px;z-index:20;}
+  .bottom-bar .btn{width:100%;}
+  .card-app{border:1px solid #e5e7eb;border-radius:12px;}
+  .tap-target-48{min-width:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <nav class="navbar navbar-app px-3 py-2">
+    <button class="btn btn-link tap-target-48 p-0" style="color:#fff;" onclick="location.href='pantalla-ficha-especie-vista.html'" aria-label="Volver">←</button>
+    <span class="navbar-brand mb-0 h1" style="font-size:1.1rem;">Lotes · Tomate perita</span>
+    <span style="width:48px;"></span>
+  </nav>
+
+  <div class="p-3">
+    <div class="alert d-flex align-items-center gap-2" style="background:#fdecea;border:1px solid var(--alerta-stock);color:#7a1c0f;" role="alert">
+      <span class="badge badge-alerta">Stock bajo</span>
+      <span style="font-size:.9rem;">El stock total de Tomate perita (3 semillas) está por debajo del umbral definido (RF03).</span>
+    </div>
+
+    <h2 class="mt-3 mb-3">Lotes registrados</h2>
+
+    <div class="card card-app p-3 mb-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <strong>Lote #14</strong>
+          <div class="text-secondary" style="font-size:.9rem;">3 semillas disponibles · cosecha agosto 2025</div>
+          <div class="text-secondary" style="font-size:.85rem;">Procedencia: vivero El Ceibo</div>
+        </div>
+        <span class="badge badge-alerta">Bajo</span>
+      </div>
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-app-outline flex-fill">Editar</button>
+        <button class="btn btn-outline-danger flex-fill">Dar de baja</button>
+      </div>
+    </div>
+
+    <div class="card card-app p-3 mb-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <strong>Lote #09</strong>
+          <div class="text-secondary" style="font-size:.9rem;">0 semillas disponibles · cosecha 2023 <span class="text-secondary" style="font-size:.8rem;">(mes no registrado)</span></div>
+          <div class="text-secondary" style="font-size:.85rem;">Procedencia: cosecha propia</div>
+        </div>
+        <span class="badge bg-secondary">Agotado</span>
+      </div>
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-app-outline flex-fill" disabled>Editar</button>
+        <span class="text-secondary d-flex align-items-center" style="font-size:.8rem;">Historial conservado</span>
+      </div>
+    </div>
+
+    <div class="text-center text-secondary mt-4" style="font-size:.85rem;">
+      Mostrando historial de lotes dados de baja junto a los activos (HU-03: "queda su historial"). El mes de cosecha es un dato nuevo, opcional — puede no estar cargado en lotes viejos.
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-app-primary" onclick="location.href='pantalla-hu02-hu03-formulario-lote.html'">+ Cargar nuevo lote</button>
+  </div>
+</div>
+</body>
+</html>

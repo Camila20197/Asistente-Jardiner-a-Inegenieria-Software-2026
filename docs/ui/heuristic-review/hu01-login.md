@@ -4,7 +4,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu01-login.html`
 
 ## Ciclo 1 — Generación del maquetado
 
-**Prompt utilizado:** generar el maquetado HTML de la pantalla de inicio de sesión (HU-01, CU00, RF00) para el perfil de usuario "Usuario/jardinero-a" (ver `docs/ui/user-profiles/usuario.md`), mobile-first, usando Bootstrap 5, la paleta de colores definida por el grupo (verde principal #1B4D3E, alerta #D9381E, fondo #F8F9FA, texto #111111), tipografía Roboto/Inter (16px cuerpo, mínimo 20px títulos) y botones principales de al menos 48×48px. Debe incluir campos de usuario y contraseña, y representar el flujo alternativo A1 (credenciales inválidas) sin necesitar backend real.
+**Prompt utilizado:** generar el maquetado HTML de la pantalla de inicio de sesión (HU-01, CU00, RF00) para el perfil de usuario "Usuario/jardinero-a", ver `docs/ui/user-profiles/usuario.md`, mobile-first, usando Bootstrap 5, la paleta de colores definida por el grupo: verde principal #1B4D3E, alerta #D9381E, fondo #F8F9FA, texto #111111; tipografía Roboto/Inter: 16px cuerpo, mínimo 20px títulos; y botones principales de al menos 48×48px. Debe incluir campos de usuario y contraseña, y representar el flujo alternativo A1 credenciales inválidas sin necesitar backend real.
 
 **Respuesta obtenida (síntesis):** pantalla centrada verticalmente con logo, campos de usuario/contraseña, botón "Ingresar" de ancho completo (mín. 48px de alto), y un botón secundario de demostración que despliega un `alert` de Bootstrap para simular el flujo A1. Contenido completo en el archivo HTML citado arriba.
 
