@@ -29,12 +29,8 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu08-hu09-bitacora-timeline.html`
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 3 | | |
-| 5 | | |
-| 7 | | |
-| 9 | | |
-| 10 | | |
-
-## Ciclos adicionales
-
-*(Completar si corresponde.)*
+| 3 | Aceptado | Se incorporará un diálogo de confirmación antes de eliminar cualquier registro de la línea de tiempo. |
+| 5 | Aceptado | Ídem punto anterior. Previene borrados involuntarios durante el manejo del teléfono en el jardín. |
+| 7 | Aceptado | Se agregará una barra de búsqueda por palabra clave dentro del historial para facilitar la consulta con varios años acumulados (cumpliendo con el RNF de desempeño). |
+| 9 | Aceptado | Se implementará un toast o notificación de "Entrada eliminada - [Deshacer]" por 5 segundos tras borrar. |
+| 10 | Aceptado | Al tocar la píldora "Sin sincronizar", se desplegará una ayuda contextual (tooltip) que aclara: "Guardado localmente. Se sincronizará al recuperar la conexión". |
