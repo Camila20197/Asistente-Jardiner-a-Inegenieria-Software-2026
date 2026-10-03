@@ -29,11 +29,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu10-hu11-panel.html`
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 4 | | |
-| 7 | | |
-| 8 | | |
-| 10 | | |
-
-## Ciclos adicionales
-
-*(Completar si corresponde.)*
+| 4 | Aceptado | Se unificarán las barras de filtro rápido utilizando el patrón de chips de selección horizontal en toda la app. |
+| 7 | Aceptado | Los filtros se aplicarán de forma reactiva/instantánea al seleccionar, mostrando dinámicamente la cantidad de registros coincidentes. |
+| 8 | Rechazado | Se trata de un mockup didáctico diseñado para mostrar todos los componentes posibles a la cátedra; en ejecución real solo se renderiza el estado vacío si no existen datos. |
+| 10 | Aceptado | Se acompañará el ícono con el mensaje claro: "Aún no has registrado lotes ni notas de campo. Comienza cargando una especie". |
