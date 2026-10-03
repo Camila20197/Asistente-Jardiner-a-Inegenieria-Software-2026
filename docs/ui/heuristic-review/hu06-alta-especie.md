@@ -30,10 +30,10 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu06-alta-especie.html`
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
 | 1 | | |
-| 5 | | |
-| 6 | | |
-| 9 | | |
-| 10 | | |
+| 5 | Aceptado | Se marcará la sección "Identidad" como obligatoria y se deshabilitará el botón de guardado si los campos clave están vacíos. |
+| 6 | Aceptado | Se reemplazó la lista por selectores de rango de meses (Desde/Hasta) por actividad, mejorando la usabilidad. |
+| 9 | Aceptado | Se incluirá un resumen de errores en la parte superior del formulario al intentar enviar datos inválidos. |
+| 10 | Aceptado | Se agregaron placeholders descriptivos (ej. "ej: riego moderado, sol pleno") en cada campo del formulario. |
 
 ## Ciclos adicionales
 
@@ -55,4 +55,4 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu06-alta-especie.html`
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 7 (nuevo) | | |
+| 7 (nuevo) | Aceptado | Se modificó el texto del botón principal a "Guardar borrador / Ficha parcial" y se añadió un aviso de "Carga incremental habilitada". |
