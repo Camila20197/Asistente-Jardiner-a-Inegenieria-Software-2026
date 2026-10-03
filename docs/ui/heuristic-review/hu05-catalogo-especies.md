@@ -29,9 +29,9 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu05-catalogo-especies.html`
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 4 | | |
-| 7 | | |
-| 10 | | |
+| 4 | Aceptado | Se estandarizará el uso de chips interactivos horizontales en todas las vistas de filtrado rápido por ser más ergonómicos en móviles. |
+| 7 | Rechazado | El alcance del MVP (TP1) exige únicamente el filtrado por mes de siembra. El filtrado avanzado por familia queda pospuesto. |
+| 10 | Rechazado | El usuario objetivo (agrónomo, técnico o aficionado) conoce el concepto. No se requiere recargar la pantalla con explicaciones teóricas. |
 
 ## Ciclos adicionales
 
@@ -50,7 +50,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu05-catalogo-especies.html`
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
 | 4 (agravado) | | |
-| 2/10 (nuevo) | | |
+| 2/10 (nuevo) | Aceptado | Se agregará una etiqueta textual junto a cada emoji (ej. "🌱 Siembra", "✂️ Poda") para evitar ambigüedades visuales. |
 
 ## Ciclo adicional 2 — corrección de alcance
 
