@@ -29,11 +29,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu08-hu09-formulario-entrada.html`
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 1 | | |
-| 5 | | |
-| 7 | | |
-| 10 | | |
-
-## Ciclos adicionales
-
-*(Completar si corresponde.)*
+| 1 | Aceptado | La fecha se inicializará por defecto con la fecha del día (today) y validará rangos en línea al interactuar. |
+| 5 | Rechazado | Las observaciones de campo son de texto libre. Imponer un límite rígido contradice la necesidad del usuario de registrar observaciones detalladas. |
+| 7 | Aceptado | Se añadirá el botón de acceso directo a la cámara/galería del móvil dentro del formulario para asociar fotos a la nota. |
+| 10 | Aceptado | Se configurará el placeholder del área de texto con ideas sugeridas: "ej: germinación, riego, presencia de plagas, trasplante". |
