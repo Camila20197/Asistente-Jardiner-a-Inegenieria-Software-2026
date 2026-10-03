@@ -29,11 +29,11 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu02-hu03-formulario-lote.html`
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 1 | | |
-| 3 | | |
-| 5 | | |
-| 7 | | |
-| 10 | | |
+| 1 | Aceptado | En la implementacion JS se adjuntara el evento onblur e input en cada campo para disparar las alertas en tiempo real |
+| 3 | Aceptado | Se ocultara la seccion de baja mediante una clase d-none y solo se removera dicha clase via codigo cuando el formulario reciba un id_lote en modo edicion |
+| 5 | Aceptado | Se configurará el atributo max="2026" dinamicamente segun la fecha actual del sistema para restringir el selector de año de forma dura |
+| 7 | Aceptado | El campo "Año de cosecha" tomara por defecto el año en curso para reducir la carga de tipeo en el campo |
+| 10 | Aceptado | Se incluira un texto de ayuda con ejemplos claros "ej: vivero, intercambio, cosecha propia" |
 
 ## Ciclos adicionales
 
