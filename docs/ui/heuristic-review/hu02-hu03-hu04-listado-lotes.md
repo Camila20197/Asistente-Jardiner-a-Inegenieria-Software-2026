@@ -31,12 +31,12 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu02-hu03-hu04-listado-lotes.html`
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 3 | | |
-| 5 | | |
-| 7 | | |
-| 8 | | |
-| 9 | | |
-| 10 | | |
+| 3 | Aceptado | Se agregara un modal de confirmacion antes de la baja con opcion a cancelar |
+| 5 | Aceptado | Se alinea ocn la decision del item 3 para prevenir eliminaciones accidentales con los dedos en movilidad |
+| 7 | Rechazado | Una especie no suele tener mas de 2 o 3 lotes simultaneos. Agregar filtros en esta pantalla recargaria visualmente la interfaz de forma innecesaria |
+| 8 | Rechazado | Es una decision de diseño priorizar el RNF de seguridad y la visibilidad de stock critico sobre la estetica, garantizando que la alerta se destaque ante todo|
+| 9 | Aceptado | El modal de confirmacion previene el error; adicionalmente, los lotes dados de baja conservan su registro historico visible, sin eliminarse fisicamente de la base |
+| 10 | Rechazado | Los terminos "Stock bajo" y "Agotado" son autoexplicativos en el lenguaje del dominio para el usuario |
 
 ## Ciclos adicionales
 
