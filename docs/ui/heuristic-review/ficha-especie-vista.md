@@ -31,11 +31,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-ficha-especie-vista.html`
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 4 | | |
-| 7 | | |
-| 8 | | |
-| 10 | | |
-
-## Ciclos adicionales
-
-*(Completar si corresponde.)*
+| 4 | Rechazado | Se justifica por ser la vista consolidada de consulta agronómica. Mantener toda la ficha en una sola vista continua evita tener que navegar entre pestañas en campo. |
+| 7 | Aceptado | Se agregará una barra de accesos directos horizontales |
+| 8 | Aceptado | Se estructurarán las secciones como paneles colapsables (accordions) dejando abiertos por defecto solo los cuidados principales y el stock. |
+| 10 | Aceptado | Se incluirá una pequeña aclaración: "Tratamientos ordenados desde control biológico (suave) hasta químico (último recurso)" |
