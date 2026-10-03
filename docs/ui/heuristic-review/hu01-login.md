@@ -33,12 +33,8 @@ Para cada fila marcada como "Parcial" o "Incumple", el grupo debe indicar si ace
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 1 | | |
-| 3 | | |
-| 5 | | |
-| 7 | | |
-| 10 | | |
-
-## Ciclos adicionales
-
-*(Completar si, tras la revisión del grupo, se ajusta la pantalla y se vuelve a interactuar con la IA. Registrar cada ciclo con el mismo nivel de detalle.)*
+| 1 | Aceptado | Se incorporará un spinner de carga en el botón durante la validación para cumplir con RNF de retroalimentación inmediata |
+| 3 | Rechazado | Para el alcance de este TP se trabaja con cuentas precargadas en memoria, la recuperacion de contraseñas queda diferida a un incremento futuro con backend completo |
+| 5 | Aceptado | Se agrega la propiedad required de HTML5 y la clase de validacion de Bootstrap para deshabilitar la accion si los campos estan vacios |
+| 7 | Rechazado | La aplicacion es de uso personal directo desde el navegador del celular. Un token de inicio de sesion persistente localmente ya evita tener que reingresar credenciales en cada acceso |
+| 10 | Rechazado | La interfaz de login se mantiene deliberadamente minimalista para centrarse en un unico objetivo. El soporte no es una prioridad en esta pantalla inicial de prototipo |
