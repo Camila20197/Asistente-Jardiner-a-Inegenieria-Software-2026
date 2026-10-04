@@ -29,3 +29,23 @@
 **Resultado:** Mejora en la redacción y especificaciones.
 **Modificado/descartado:** Lo que no gustaba, no se poía.
 **Error detectado:** Si, realizaba mas tarea de la pedida, por ejemplo, aagregacion de RNF.
+
+---
+
+## [TP2]
+
+### Redacción inicial de los escenarios
+
+**Herramienta:** Gemini AI
+**Tarea:** identificar atributos de calidad críticos y redactar los escenarios a partir del SRS.
+**Resultado:** una primera versión con cinco atributos, un escenario por atributo y sugerencias de escenarios adicionales.
+**Modificado/descartado:** se ampliaron los escenarios a tres por atributo y se reescribió la justificación de la selección.
+**Error detectado:** la primera versión asumía un uso institucional, con varios técnicos y un administrador operando sobre el mismo stock, e incluía un escenario de Integridad en el que un usuario de "público general" modificaba lotes ajenos. Eso contradice la decisión del TP1 de que el prototipo es de uso personal y que los lotes son privados por usuario. 
+
+### Revisión de consistencia previa a la entrega
+
+**Herramienta:** Claude
+**Tarea:** revisar los escenarios contra el SRS y contra la consigna.
+**Resultado:** señaló tres problemas.
+**Modificado/descartado:** se aceptaron los tres y se corrigieron.
+**Error detectado:** los escenarios citaban RNF01 y RNF02 "ya definidos en el SRS", pero el SRS no tiene requerimientos no funcionales: venían de los apuntes iniciales y nunca se pasaron. El escenario 5.1 nombraba "CropCalendar" mientras el SRS habla de Google Calendar. Y la medida de 5.3 ("en menos de unos pocos minutos") no era cuantificable, cuando la consigna pide que la medida verifique o cuantifique la respuesta.
