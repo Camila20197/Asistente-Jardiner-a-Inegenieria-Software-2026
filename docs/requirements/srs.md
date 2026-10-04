@@ -167,7 +167,7 @@ classDiagram
         +id: int
         +cantidadInicial: int
         +cantidadActual: int
-        +anio: int
+        +mesCosecha: int
         +procedencia: string
         +fechaAlta: date
     }
@@ -192,7 +192,7 @@ classDiagram
 | `Usuario` | Cuenta con la que se accede al sistema. | RF00, CU00 |
 | `RolUsuario` | Enumeración de los dos roles del sistema (administrador / usuario). | Sección "Stakeholders y roles" |
 | `Especie` | Ficha de especie: catálogo de referencia, **compartido** entre todos los usuarios, no depende de quién lo cargó. | RF08 |
-| `LoteDeSemilla` | Un lote de semillas de una especie, con su cantidad, año y origen. **Privado**: pertenece a un único `Usuario`. | RF01, RF02, RF03, CU01 |
+| `LoteDeSemilla` | Un lote de semillas de una especie, con su cantidad, año y mes opcional de cosecha, y origen. **Privado**: pertenece a un único `Usuario`. | RF01, RF02, RF03, CU01 |
 | `EntradaBitacora` | Una observación de campo asociada a una especie. **Privada**: pertenece a un único `Usuario` (autor). | RF05, RF06, CU02 |
 
 
@@ -208,6 +208,7 @@ classDiagram
   usa como parámetro de comparación contra el stock derivado por especie. Si en un
   TP posterior el umbral pasara a definirse por especie o por usuario, ahí sí se
   convertiría en una entidad con relaciones propias.
+- **`mesCosecha` es opcional.** La clienta registra como mínimo el año y, cuando lo recuerda, también el mes; los lotes viejos pueden no tenerlo cargado.
 
 ## Elección de procesos a desarrollar
 
@@ -227,7 +228,7 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 
 ### Módulo 1 — Gestión de Stock de Semillas
 
-- **RF01 (obligatorio) — Registro y alta de lotes de semilla:** el sistema debe permitir registrar lotes de semillas existentes por especie, capturando cantidad inicial, año y origen, asociados al usuario que los registra (stock personal, no compartido).
+- **RF01 (obligatorio) — Registro y alta de lotes de semilla:** el sistema debe permitir registrar lotes de semillas existentes por especie, capturando cantidad inicial, año y, opcionalmente, mes de cosecha, y origen, asociados al usuario que los registra (stock personal, no compartido).
 - **RF02 (obligatorio) — Modificación y baja de lotes:** el sistema debe permitir actualizar el stock disponible de un lote, o darlo de baja si se agotó o descartó.
 - **RF03 (opcional) — Alerta de stock crítico:** el sistema debe permitir definir un umbral mínimo de stock y emitir una alerta visible dentro de la aplicación cuando la cantidad disponible **de una especie (sumando todos sus lotes)** sea menor a dicho umbral. La alerta se evalúa a nivel de especie, no de lote individual, para evitar falsos negativos cuando el stock está repartido en varios lotes pequeños.
 - **RF04 (obligatorio) — Consulta de semillas:** el sistema debe permitir filtrar el catálogo de semillas disponibles cuyo período de siembra (mes, de 1 a 12) sea el mes seleccionado.
