@@ -251,6 +251,17 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 - **RF00c — Gestión de cuentas:** alta, baja y asignación de rol a cuentas de usuario (reemplazado en TP1 por las dos cuentas precargadas).
 - **RF08d — Sincronización del catálogo:** incorporar y actualizar fichas de especie desde una fuente externa (Flora Argentina / GBIF), sin sobrescribir los datos agronómicos completados a mano.
 
+## Atributos de calidad
+
+Los atributos de calidad y sus escenarios se documentan en
+[`quality-scenarios/quality-scenarios.md`](quality-scenarios/quality-scenarios.md),según la taxonomía ISO/IEC 25010:2023. Se seleccionaron cinco características, con tres escenarios cada una, priorizando entornos degradados:
+
+- **Eficiencia de desempeño:** comportamiento temporal, utilización de recursos, capacidad.
+- **Capacidad de interacción:** capacidad de aprendizaje, protección frente a errores del usuario, asistencia al usuario.
+- **Fiabilidad:** disponibilidad, capacidad de recuperación, tolerancia a fallos.
+- **Seguridad de la información:** confidencialidad, integridad, autenticidad.
+- **Mantenibilidad:** modularidad, modificabilidad, capacidad de prueba.
+
 ## Casos de uso
 
 ### CU00 (obligatorio): Iniciar sesión
