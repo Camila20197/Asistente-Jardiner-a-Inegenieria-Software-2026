@@ -25,7 +25,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu10-hu11-panel.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Cumple | El estado vacío es informativo y no se presenta como un error. |
 | 10 | Ayuda y documentación | Incumple | No hay ninguna affordance visible que explique el ícono de estado vacío ("🪴") para un usuario que lo vea por primera vez. |
 
-## Decisión del grupo (a completar)
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|

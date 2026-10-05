@@ -27,7 +27,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-ficha-especie-vista.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Cumple | No aplica al ser una pantalla de solo lectura. |
 | 10 | Ayuda y documentación | Incumple | No se explica, por ejemplo, qué significa el orden de los tratamientos fitosanitarios (más suave a más fuerte) para alguien que lo vea por primera vez. |
 
-## Decisión del grupo (a completar)
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|

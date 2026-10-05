@@ -25,7 +25,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu08-hu09-formulario-entrada.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Cumple | El mensaje de error de formato de fecha es específico y comprensible. |
 | 10 | Ayuda y documentación | Incumple | No hay ningún ejemplo de qué tipo de observación registrar, para quien recién empieza a usar la bitácora. |
 
-## Decisión del grupo (a completar)
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|

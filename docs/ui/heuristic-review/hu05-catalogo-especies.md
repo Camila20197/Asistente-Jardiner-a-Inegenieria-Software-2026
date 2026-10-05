@@ -25,7 +25,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu05-catalogo-especies.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Cumple | El estado vacío sugiere una acción concreta ("probá con otro mes o dá de alta una especie nueva"). |
 | 10 | Ayuda y documentación | Incumple | No se explica qué significa "período de siembra" para alguien que recién empieza. |
 
-## Decisión del grupo (a completar)
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
@@ -45,11 +45,11 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu05-catalogo-especies.html`
 |---|---|---|---|
 | 2 / 10 | Coincidencia con el mundo real / Ayuda y documentación | Parcial | Los tipos de actividad se identifican con emojis (🌱 ✂️ 🌾 🌿) sin ninguna leyenda; alguien nuevo puede no asociar el emoji con el tipo de actividad de forma inequívoca. |
 
-**Decisión del grupo (a completar):**
+**Decisión del grupo docs/ui/heuristic-review:**
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 4 (agravado) | | |
+| 4 (agravado) | Aceptado | La pestaña "Por mes / Buscar" que lo agravaba se quitó en el ciclo adicional 2. La diferencia de patrón con el Panel se resuelve con la unificación a chips aceptada en la fila 4. |
 | 2/10 (nuevo) | Aceptado | Se agregará una etiqueta textual junto a cada emoji (ej. "🌱 Siembra", "✂️ Poda") para evitar ambigüedades visuales. |
 
 ## Ciclo adicional 2 — corrección de alcance

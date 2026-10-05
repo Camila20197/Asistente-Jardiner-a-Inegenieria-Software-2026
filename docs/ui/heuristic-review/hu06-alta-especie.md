@@ -25,11 +25,11 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu06-alta-especie.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Incumple | No hay ningún mensaje si se intenta guardar sin nombre. |
 | 10 | Ayuda y documentación | Parcial | El aviso sobre el catálogo compartido orienta al usuario, pero no hay ejemplos de qué escribir en "cuidados básicos". |
 
-## Decisión del grupo (a completar)
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 1 | | |
+| 1 | Aceptado | Resuelto en el ciclo adicional: cada sección del formulario indica ahora (obligatoria) u (opcional). |
 | 5 | Aceptado | Se marcará la sección "Identidad" como obligatoria y se deshabilitará el botón de guardado si los campos clave están vacíos. |
 | 6 | Aceptado | Se reemplazó la lista por selectores de rango de meses (Desde/Hasta) por actividad, mejorando la usabilidad. |
 | 9 | Aceptado | Se incluirá un resumen de errores en la parte superior del formulario al intentar enviar datos inválidos. |
@@ -51,7 +51,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu06-alta-especie.html`
 |---|---|---|---|
 | 7 | Flexibilidad y eficiencia de uso | Incumple | Pese a que el alert aclara que la carga es incremental, no hay un botón del tipo "guardar y completar después" — todo pasa por el mismo botón "Guardar", lo que puede generar dudas sobre si guardar con campos vacíos es realmente válido. |
 
-**Decisión del grupo (a completar):**
+**Decisión del grupo docs/ui/heuristic-review:**
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|

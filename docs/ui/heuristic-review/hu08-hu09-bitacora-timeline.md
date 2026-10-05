@@ -25,7 +25,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu08-hu09-bitacora-timeline.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Incumple | Al no existir confirmación de borrado (puntos 3 y 5), tampoco hay forma de deshacer una eliminación accidental. |
 | 10 | Ayuda y documentación | Incumple | No se explica qué significa el estado "sin sincronizar" ni qué debería hacer el usuario al respecto. |
 
-## Decisión del grupo (a completar)
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|

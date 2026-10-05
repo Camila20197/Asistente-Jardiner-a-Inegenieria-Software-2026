@@ -27,7 +27,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu02-hu03-hu04-listado-lotes.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Incumple | Al no haber confirmación de baja (punto 5), tampoco hay forma de recuperarse de una baja accidental. |
 | 10 | Ayuda y documentación | Incumple | No hay ícono ni texto de ayuda contextual en la pantalla. |
 
-## Decisión del grupo (a completar)
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
@@ -46,7 +46,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu02-hu03-hu04-listado-lotes.html`
 
 **Hallazgos #3, #5, #9 (falta de confirmación al dar de baja/marcar sin stock) — siguen vigentes sin cambios**, ahora aplicados al botón "Marcar sin stock" en lugar de "Dar de baja".
 
-**Decisión del grupo (a completar):** sin cambios respecto de la tabla original — las filas #3, #5 y #9 siguen pendientes.
+**Decisión del grupo docs/ui/heuristic-review:** sin cambios respecto de la tabla original — las filas #3, #5 y #9 siguen aceptadas.
 
 ## Ciclo adicional 2 — corrección de alcance
 
