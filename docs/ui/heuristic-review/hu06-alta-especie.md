@@ -10,6 +10,8 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu06-alta-especie.html`
 
 ## Ciclo 2 — Evaluación heurística (rol: especialista en interfaz de usuario)
 
+**Prompt utilizado:** el mismo que en la evaluación de HU-01 (ver `hu01-login.md`), aplicado a esta pantalla con el mismo perfil de usuario y escenario de uso.
+
 **Respuesta obtenida:**
 
 | # | Heurística | Evaluación | Justificación |
