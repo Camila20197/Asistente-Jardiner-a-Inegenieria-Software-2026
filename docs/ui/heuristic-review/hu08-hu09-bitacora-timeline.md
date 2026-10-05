@@ -35,3 +35,19 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu08-hu09-bitacora-timeline.html`
 | 7 | Aceptado | Se agregará una barra de búsqueda por palabra clave dentro del historial para facilitar la consulta con varios años acumulados (cumpliendo con el RNF de desempeño). |
 | 9 | Aceptado | Se implementará un toast o notificación de "Entrada eliminada - [Deshacer]" por 5 segundos tras borrar. |
 | 10 | Aceptado | Al tocar la píldora "Sin sincronizar", se desplegará una ayuda contextual (tooltip) que aclara: "Guardado localmente. Se sincronizará al recuperar la conexión". |
+
+## Ciclos adicionales
+
+### Ciclo adicional 1 — aplicación de hallazgos aceptados
+
+**Herramienta:** Claude
+**Prompt utilizado:** a partir del maquetado original y de las decisiones del grupo sobre los hallazgos 3, 5, 9 y 10, aplicar al HTML una confirmación antes de eliminar una entrada y una explicación visible del estado "Sin sincronizar", sin modificar el resto de la pantalla.
+
+**Cambios aplicados al maquetado:**
+
+- **Hallazgos 3 y 5 (control y libertad del usuario, prevención de errores):** el botón de eliminar abre un diálogo de confirmación con dos salidas. La opción segura, "Conservarla", aparece primero.
+- **Hallazgo 9 (recuperarse de errores):** queda cubierto por la confirmación previa, que evita el borrado accidental. El aviso de "Deshacer" durante 5 segundos no se implementó en este ciclo.
+- **Hallazgo 10 (ayuda y documentación):** el grupo había aceptado un tooltip al tocar la etiqueta "Sin sincronizar". Al aplicarlo se cambió por un aviso visible arriba de la línea de tiempo, porque en un celular los tooltips no aparecen al tocar: dependen de pasar el mouse por encima. Para un usuario que opera con el dedo, la solución aceptada no habría funcionado.
+- Se quitó el párrafo que remitía a una "nota de RNF en el perfil de usuario", que no existe.
+
+**Pendiente para la próxima iteración:** hallazgo 7, búsqueda dentro del historial.
