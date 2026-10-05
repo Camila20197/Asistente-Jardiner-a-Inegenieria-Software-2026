@@ -2,7 +2,7 @@
 
 Archivo maquetado: `docs/ui/mockups/pantalla-ficha-especie-vista.html`
 
-**Nota de alcance:** esta pantalla no estaba en la primera versión de Parte B. Surge de la entrevista con la clienta, que amplió sustancialmente lo que debe contener una ficha de especie (identidad, cuidados incrementales, reproducción, calendario de actividades, problemas fitosanitarios, fotos). Todavía no tiene RF/HU formal en el SRS — ver la nota correspondiente en `docs/ui/user-profiles/usuario.md`.
+**Nota de alcance:** esta pantalla cubre la parte de *consulta* de RF08 ("Alta y consulta de ficha de especie") y la tarea del usuario que el SRS lista en la sección 1.3: "Consultar la ficha completa de una especie mientras trabaja con ella". En el TP1 esa consulta no quedó escrita como historia de usuario propia —HU-06 cubre solo el alta—, aunque los criterios de HU-07 ya la dan por supuesta ("visibles al consultar la especie"). La omisión se detectó al armar el flujo de navegación de esta Parte B. Como la guía del TP2 no permite agregar historias nuevas, la historia de consulta queda para formalizarse en la próxima iteración. Las secciones de reproducción, actividades, problemas fitosanitarios y fotos también anticipan esa iteración.
 
 ## Ciclo 1 — Generación del maquetado
 
