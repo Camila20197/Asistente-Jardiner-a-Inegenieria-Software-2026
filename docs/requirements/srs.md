@@ -5,7 +5,7 @@
 ## 1. Visión y alcance
 
 ### 1.1 Dominio y problema
-En la jardinería, los cultivadores enfrentan desorganización en el seguimiento de sus cultivos o pérdida de insumos. Actualmente esto se resuelve de forma frangmentada mediante plantillas de cálculo, libretas de papel o la memoria, lo que puede provocar la pérdida de semillas por vencimiento y la falta de registros de técnicas que funcionaron en temporadas pasadas. 
+En la jardinería, los cultivadores enfrentan desorganización en el seguimiento de sus cultivos o pérdida de insumos. Actualmente esto se resuelve de forma fragmentada mediante plantillas de cálculo, libretas de papel o la memoria, lo que puede provocar la pérdida de semillas por vencimiento y la falta de registros de técnicas que funcionaron en temporadas pasadas. 
 
 ### 1.2 Datos gestionados
 * **Datos botánicos:** Fichas de especie, nombres científicos con reglas de formato (género en cursiva, variedad entre comillas simples), nombres comunes y familias.
@@ -74,7 +74,7 @@ Transforma la gestión empírica en un proceso guiado y predecible. Permite la c
 1. Control de semillas: Permite controlar el inventario.
 2. Gestión de bitácora y observaciones: Permite realizar un seguimiento de las especies elegidas, añadiendo controles pregerminativos, tipos, enfermedades y plagas, entre otros.
 3. Visualización: Panel de observación de stock y bitácora.
-* **Procesos descartados para iteracciones futuras:**
+* **Procesos descartados para iteraciones futuras:**
 1. *Sincronización con Google Calendar API* y *Alertas Climáticas con Estación Meteorológica*. Se posponen por depender de APIs de terceros. Aislar estos componentes permite consolidar la arquitectura de datos propia y reducir riesgos técnicos.
 2. *Sincronización del catálogo de especies con fuentes externas (Flora Argentina, GBIF) y administración de cuentas de usuario.* Se posponen porque, según la entrevista con la clienta, el administrador no tiene funcionalidad propia en esta primera versión (ver 1.3); el catálogo se carga manualmente.
 
@@ -242,7 +242,7 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 
 ### Módulo 3 — Visualización
 
-- **RF10 (obligatorio) — Historial de bitácora:** el sistema debe permitir visualizar, para una especie dada, la línea de tiempo de las entradas de bitácora registradas (fecha, autor, notas), ordenadas cronológicamente.
+- **RF10 (obligatorio) — Historial de bitácora:** el sistema debe permitir visualizar, para una especie dada, la línea de tiempo de las entradas de bitácora registradas (fecha, notas), ordenadas cronológicamente.
 - **RF11 (obligatorio) — Panel de stock:** el sistema debe permitir visualizar un resumen del stock total de semillas por especie y por lote, destacando las especies por debajo del umbral crítico.
 - **RF12 (obligatorio) — Filtros de visualización:** el sistema debe permitir filtrar la información visualizada por especie, por rango de fechas.
 
@@ -366,7 +366,7 @@ Los atributos de calidad y sus escenarios se documentan en
 
 ## Historias de usuario
 
-Una historia de usuario por caso de uso. Cada una indica su prioridad, copiada de la del RF/CU que implementa.
+Una o más historias de usuario por caso de uso, según la cantidad de flujos con valor independiente. Cada una indica su prioridad, copiada de la del RF/CU que implementa.
 
 ### HU-01 (obligatoria) — Iniciar sesión
 
@@ -407,7 +407,7 @@ Realiza: RF03, CU01.
 Realiza: RF04, CU01.
 
 - Given que selecciono un mes del año, When aplico el filtro, Then el sistema muestra solo las especies cuyo período de siembra incluye ese mes.
-- Given que ningún especie tiene ese mes entre sus períodos de siembra, When aplico el filtro, Then el listado queda vacío con un aviso claro (no un error).
+- Given que ninguna especie tiene ese mes entre sus períodos de siembra, When aplico el filtro, Then el listado queda vacío con un aviso claro (no un error).
 
 ### HU-06 (obligatoria) — Dar de alta una especie manualmente
 
@@ -451,7 +451,7 @@ Realiza: RF10, RF11, CU03.
 ### HU-11 (obligatoria) — Filtrar la información del panel
 
 **Como** usuario autenticado, **quiero** filtrar el panel por especie y por rango de fechas, **para** encontrar rápido la información que necesito.
-Realiza: RF12 (corregido — ver nota en Requerimientos funcionales), CU03.
+Realiza: RF12, CU03.
 
 - Given que estoy en el panel, When filtro por una especie puntual, Then veo solo el stock y la bitácora de esa especie.
 - Given que estoy en el panel, When filtro por un rango de fechas, Then la línea de tiempo de bitácora se limita a ese rango.
@@ -459,7 +459,7 @@ Realiza: RF12 (corregido — ver nota en Requerimientos funcionales), CU03.
 ### HU-12 (diferido a un TP posterior) — Sincronizar el catálogo de especies
 
 **Como** administrador, **quiero** sincronizar el catálogo de especies con la fuente externa, **para** mantenerlo actualizado sin tener que cargar todo a mano.
-Realiza: RF00b, CU05.
+Realiza: RF08d, CU05.
 
 - Given que soy administrador y tengo conexión a internet, When ejecuto "sincronizar catálogo", Then el sistema agrega las especies nuevas, actualiza los campos de origen externo de las existentes sin pisar los datos agronómicos ya completados, y me muestra un resumen de cuántas se agregaron/actualizaron.
 - Given que la fuente externa no responde, When intento sincronizar, Then el sistema aborta sin modificar el catálogo local y me avisa del error.
