@@ -49,3 +49,20 @@
 **Resultado:** señaló tres problemas.
 **Modificado/descartado:** se aceptaron los tres y se corrigieron.
 **Error detectado:** los escenarios citaban RNF01 y RNF02 "ya definidos en el SRS", pero el SRS no tiene requerimientos no funcionales: venían de los apuntes iniciales y nunca se pasaron. El escenario 5.1 nombraba "CropCalendar" mientras el SRS habla de Google Calendar. Y la medida de 5.3 ("en menos de unos pocos minutos") no era cuantificable, cuando la consigna pide que la medida verifique o cuantifique la respuesta.
+## TP2
+
+### [TP2] Parte A — Escenarios de atributo de calidad
+
+El registro está junto a los escenarios, como pide la guía: `docs/requirements/quality-scenarios/quality-scenarios.md`, sección "Registro de uso de IA".
+
+### [TP2] Parte B — Maquetado y evaluación heurística
+
+Un documento por pantalla en `docs/ui/heuristic-review/`, con los prompts, las respuestas de la IA, la decisión del grupo sobre cada hallazgo y los ciclos adicionales.
+
+### [TP2] Revisión del repositorio contra el checklist antes de la entrega
+
+**Herramienta:** Claude
+**Tarea:** revisar los entregables del TP2 contra el checklist y las rutas de la guía.
+**Resultado:** señaló carpetas con nombres distintos a los de la guía, cuatro decisiones de revisión heurística sin completar, prompts de evaluación faltantes en siete documentos, referencias a requerimientos no funcionales inexistentes en el SRS, y una pantalla sin historia de usuario que la respalde.
+**Modificado/descartado:** sobre la pantalla de ficha de especie, la IA presentó dos opciones y la decisión la tomó el grupo: [completar con lo que decidieron].
+**Error detectado:** la IA afirmó que el aviso de "pendiente de formalizar" estaba en dos pantallas, la ficha de especie y el alta de especie. Al revisarlo, solo estaba en la ficha: el aviso del alta de especie explica la carga incremental y es correcto.
