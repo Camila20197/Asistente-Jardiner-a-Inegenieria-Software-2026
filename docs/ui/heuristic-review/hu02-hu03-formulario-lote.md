@@ -10,6 +10,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu02-hu03-formulario-lote.html`
 
 ## Ciclo 2 — Evaluación heurística (rol: especialista en interfaz de usuario)
 
+**Prompt utilizado:** el mismo que en la evaluación de HU-01 (ver `hu01-login.md`), aplicado a esta pantalla con el mismo perfil de usuario y escenario de uso.
 **Respuesta obtenida:**
 
 | # | Heurística | Evaluación | Justificación |
@@ -25,7 +26,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu02-hu03-formulario-lote.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Cumple | Los mensajes de error son específicos por campo y explican la regla (A1/A2). |
 | 10 | Ayuda y documentación | Incumple | No hay aclaración de qué se espera en "procedencia" para quien no lo tenga claro. |
 
-## Decisión del grupo (a completar)
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
@@ -47,11 +48,11 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu02-hu03-formulario-lote.html`
 |---|---|---|---|
 | 1 | Visibilidad del estado del sistema | Parcial | El control "Sí/No" de stock aparece con "Sí" preseleccionado sin que quede claro por qué ese es el valor por defecto al crear un lote nuevo. |
 
-**Decisión del grupo (a completar):**
+**Decisión del grupo docs/ui/heuristic-review:**
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|
-| 1 (nuevo) | | |
+| 1 (nuevo) | Rechazado | Quedó sin objeto: el control "¿Hay stock? Sí/No" que lo originaba se revirtió en el ciclo adicional 2. |
 
 ## Ciclo adicional 2 — corrección de alcance
 

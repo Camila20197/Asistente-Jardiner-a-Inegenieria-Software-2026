@@ -10,6 +10,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu10-hu11-panel.html`
 
 ## Ciclo 2 — Evaluación heurística (rol: especialista en interfaz de usuario)
 
+**Prompt utilizado:** el mismo que en la evaluación de HU-01 (ver `hu01-login.md`), aplicado a esta pantalla con el mismo perfil de usuario y escenario de uso.
 **Respuesta obtenida:**
 
 | # | Heurística | Evaluación | Justificación |
@@ -25,7 +26,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu10-hu11-panel.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Cumple | El estado vacío es informativo y no se presenta como un error. |
 | 10 | Ayuda y documentación | Incumple | No hay ninguna affordance visible que explique el ícono de estado vacío ("🪴") para un usuario que lo vea por primera vez. |
 
-## Decisión del grupo (a completar)
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|

@@ -5,7 +5,7 @@
 ## 1. Visión y alcance
 
 ### 1.1 Dominio y problema
-En la jardinería, los cultivadores enfrentan desorganización en el seguimiento de sus cultivos o pérdida de insumos. Actualmente esto se resuelve de forma frangmentada mediante plantillas de cálculo, libretas de papel o la memoria, lo que puede provocar la pérdida de semillas por vencimiento y la falta de registros de técnicas que funcionaron en temporadas pasadas. 
+En la jardinería, los cultivadores enfrentan desorganización en el seguimiento de sus cultivos o pérdida de insumos. Actualmente esto se resuelve de forma fragmentada mediante plantillas de cálculo, libretas de papel o la memoria, lo que puede provocar la pérdida de semillas por vencimiento y la falta de registros de técnicas que funcionaron en temporadas pasadas. 
 
 ### 1.2 Datos gestionados
 * **Datos botánicos:** Fichas de especie, nombres científicos con reglas de formato (género en cursiva, variedad entre comillas simples), nombres comunes y familias.
@@ -74,7 +74,7 @@ Transforma la gestión empírica en un proceso guiado y predecible. Permite la c
 1. Control de semillas: Permite controlar el inventario.
 2. Gestión de bitácora y observaciones: Permite realizar un seguimiento de las especies elegidas, añadiendo controles pregerminativos, tipos, enfermedades y plagas, entre otros.
 3. Visualización: Panel de observación de stock y bitácora.
-* **Procesos descartados para iteracciones futuras:**
+* **Procesos descartados para iteraciones futuras:**
 1. *Sincronización con Google Calendar API* y *Alertas Climáticas con Estación Meteorológica*. Se posponen por depender de APIs de terceros. Aislar estos componentes permite consolidar la arquitectura de datos propia y reducir riesgos técnicos.
 2. *Sincronización del catálogo de especies con fuentes externas (Flora Argentina, GBIF) y administración de cuentas de usuario.* Se posponen porque, según la entrevista con la clienta, el administrador no tiene funcionalidad propia en esta primera versión (ver 1.3); el catálogo se carga manualmente.
 
@@ -167,7 +167,7 @@ classDiagram
         +id: int
         +cantidadInicial: int
         +cantidadActual: int
-        +anio: int
+        +mesCosecha: int
         +procedencia: string
         +fechaAlta: date
     }
@@ -192,7 +192,7 @@ classDiagram
 | `Usuario` | Cuenta con la que se accede al sistema. | RF00, CU00 |
 | `RolUsuario` | Enumeración de los dos roles del sistema (administrador / usuario). | Sección "Stakeholders y roles" |
 | `Especie` | Ficha de especie: catálogo de referencia, **compartido** entre todos los usuarios, no depende de quién lo cargó. | RF08 |
-| `LoteDeSemilla` | Un lote de semillas de una especie, con su cantidad, año y origen. **Privado**: pertenece a un único `Usuario`. | RF01, RF02, RF03, CU01 |
+| `LoteDeSemilla` | Un lote de semillas de una especie, con su cantidad, año y mes opcional de cosecha, y origen. **Privado**: pertenece a un único `Usuario`. | RF01, RF02, RF03, CU01 |
 | `EntradaBitacora` | Una observación de campo asociada a una especie. **Privada**: pertenece a un único `Usuario` (autor). | RF05, RF06, CU02 |
 
 
@@ -208,6 +208,7 @@ classDiagram
   usa como parámetro de comparación contra el stock derivado por especie. Si en un
   TP posterior el umbral pasara a definirse por especie o por usuario, ahí sí se
   convertiría en una entidad con relaciones propias.
+- **`mesCosecha` es opcional.** La clienta registra como mínimo el año y, cuando lo recuerda, también el mes; los lotes viejos pueden no tenerlo cargado.
 
 ## Elección de procesos a desarrollar
 
@@ -227,7 +228,7 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 
 ### Módulo 1 — Gestión de Stock de Semillas
 
-- **RF01 (obligatorio) — Registro y alta de lotes de semilla:** el sistema debe permitir registrar lotes de semillas existentes por especie, capturando cantidad inicial, año y origen, asociados al usuario que los registra (stock personal, no compartido).
+- **RF01 (obligatorio) — Registro y alta de lotes de semilla:** el sistema debe permitir registrar lotes de semillas existentes por especie, capturando cantidad inicial, año y, opcionalmente, mes de cosecha, y origen, asociados al usuario que los registra (stock personal, no compartido).
 - **RF02 (obligatorio) — Modificación y baja de lotes:** el sistema debe permitir actualizar el stock disponible de un lote, o darlo de baja si se agotó o descartó.
 - **RF03 (opcional) — Alerta de stock crítico:** el sistema debe permitir definir un umbral mínimo de stock y emitir una alerta visible dentro de la aplicación cuando la cantidad disponible **de una especie (sumando todos sus lotes)** sea menor a dicho umbral. La alerta se evalúa a nivel de especie, no de lote individual, para evitar falsos negativos cuando el stock está repartido en varios lotes pequeños.
 - **RF04 (obligatorio) — Consulta de semillas:** el sistema debe permitir filtrar el catálogo de semillas disponibles cuyo período de siembra (mes, de 1 a 12) sea el mes seleccionado.
@@ -241,7 +242,7 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 
 ### Módulo 3 — Visualización
 
-- **RF10 (obligatorio) — Historial de bitácora:** el sistema debe permitir visualizar, para una especie dada, la línea de tiempo de las entradas de bitácora registradas (fecha, autor, notas), ordenadas cronológicamente.
+- **RF10 (obligatorio) — Historial de bitácora:** el sistema debe permitir visualizar, para una especie dada, la línea de tiempo de las entradas de bitácora registradas (fecha, notas), ordenadas cronológicamente.
 - **RF11 (obligatorio) — Panel de stock:** el sistema debe permitir visualizar un resumen del stock total de semillas por especie y por lote, destacando las especies por debajo del umbral crítico.
 - **RF12 (obligatorio) — Filtros de visualización:** el sistema debe permitir filtrar la información visualizada por especie, por rango de fechas.
 
@@ -250,6 +251,17 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 - **RF00b — Control de acceso por rol:** restringir funcionalidades específicas al rol administrador (ej. configuración de umbrales).
 - **RF00c — Gestión de cuentas:** alta, baja y asignación de rol a cuentas de usuario (reemplazado en TP1 por las dos cuentas precargadas).
 - **RF08d — Sincronización del catálogo:** incorporar y actualizar fichas de especie desde una fuente externa (Flora Argentina / GBIF), sin sobrescribir los datos agronómicos completados a mano.
+
+## Atributos de calidad
+
+Los atributos de calidad y sus escenarios se documentan en
+[`quality-scenarios/quality-scenarios.md`](quality-scenarios/quality-scenarios.md),según la taxonomía ISO/IEC 25010:2023. Se seleccionaron cinco características, con tres escenarios cada una, priorizando entornos degradados:
+
+- **Eficiencia de desempeño:** comportamiento temporal, utilización de recursos, capacidad.
+- **Capacidad de interacción:** capacidad de aprendizaje, protección frente a errores del usuario, asistencia al usuario.
+- **Fiabilidad:** disponibilidad, capacidad de recuperación, tolerancia a fallos.
+- **Seguridad de la información:** confidencialidad, integridad, autenticidad.
+- **Mantenibilidad:** modularidad, modificabilidad, capacidad de prueba.
 
 ## Casos de uso
 
@@ -354,7 +366,7 @@ Cada RF indica su prioridad para la línea base de TP1: **(obligatorio)** o **(o
 
 ## Historias de usuario
 
-Una historia de usuario por caso de uso. Cada una indica su prioridad, copiada de la del RF/CU que implementa.
+Una o más historias de usuario por caso de uso, según la cantidad de flujos con valor independiente. Cada una indica su prioridad, copiada de la del RF/CU que implementa.
 
 ### HU-01 (obligatoria) — Iniciar sesión
 
@@ -395,7 +407,7 @@ Realiza: RF03, CU01.
 Realiza: RF04, CU01.
 
 - Given que selecciono un mes del año, When aplico el filtro, Then el sistema muestra solo las especies cuyo período de siembra incluye ese mes.
-- Given que ningún especie tiene ese mes entre sus períodos de siembra, When aplico el filtro, Then el listado queda vacío con un aviso claro (no un error).
+- Given que ninguna especie tiene ese mes entre sus períodos de siembra, When aplico el filtro, Then el listado queda vacío con un aviso claro (no un error).
 
 ### HU-06 (obligatoria) — Dar de alta una especie manualmente
 
@@ -439,7 +451,7 @@ Realiza: RF10, RF11, CU03.
 ### HU-11 (obligatoria) — Filtrar la información del panel
 
 **Como** usuario autenticado, **quiero** filtrar el panel por especie y por rango de fechas, **para** encontrar rápido la información que necesito.
-Realiza: RF12 (corregido — ver nota en Requerimientos funcionales), CU03.
+Realiza: RF12, CU03.
 
 - Given que estoy en el panel, When filtro por una especie puntual, Then veo solo el stock y la bitácora de esa especie.
 - Given que estoy en el panel, When filtro por un rango de fechas, Then la línea de tiempo de bitácora se limita a ese rango.
@@ -447,7 +459,7 @@ Realiza: RF12 (corregido — ver nota en Requerimientos funcionales), CU03.
 ### HU-12 (diferido a un TP posterior) — Sincronizar el catálogo de especies
 
 **Como** administrador, **quiero** sincronizar el catálogo de especies con la fuente externa, **para** mantenerlo actualizado sin tener que cargar todo a mano.
-Realiza: RF00b, CU05.
+Realiza: RF08d, CU05.
 
 - Given que soy administrador y tengo conexión a internet, When ejecuto "sincronizar catálogo", Then el sistema agrega las especies nuevas, actualiza los campos de origen externo de las existentes sin pisar los datos agronómicos ya completados, y me muestra un resumen de cuántas se agregaron/actualizaron.
 - Given que la fuente externa no responde, When intento sincronizar, Then el sistema aborta sin modificar el catálogo local y me avisa del error.

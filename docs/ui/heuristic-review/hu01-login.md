@@ -27,9 +27,7 @@ Archivo maquetado: `docs/ui/mockups/pantalla-hu01-login.html`
 | 9 | Ayuda a reconocer, diagnosticar y recuperarse de errores | Cumple | El mensaje de error es específico sobre qué hacer ("probá de nuevo"), sin revelar cuál campo falló (correcto por seguridad). |
 | 10 | Ayuda y documentación | Incumple | No hay ningún acceso a ayuda o contacto visible desde esta pantalla. |
 
-## Decisión del grupo (a completar)
-
-Para cada fila marcada como "Parcial" o "Incumple", el grupo debe indicar si acepta el hallazgo (y qué ajuste hace) o si lo rechaza (y por qué no aplica a este proyecto). Este es el paso pedagógico central de la actividad — no debe quedar vacío en la entrega final.
+## Decisión del grupo docs/ui/heuristic-review
 
 | # | Decisión (Aceptado/Rechazado) | Motivo |
 |---|---|---|

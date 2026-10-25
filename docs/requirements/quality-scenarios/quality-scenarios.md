@@ -12,7 +12,7 @@
 
 El sistema es una herramienta de uso operativo diario para una persona que gestiona su propia huerta, hoy resuelta en papel o Excel, usada mayormente en el campo con conectividad intermitente, y desarrollada bajo un ciclo de vida iterativo-incremental que dejó fuera de alcance las integraciones externas para este incremento.
 
-- **Capacidad de interacción** y **Fiabilidad** son imprescindibles porque son la razón de ser de RNF01 (usabilidad/responsive) y RNF02 (persistencia offline) ya definidos en el SRS.
+- **Capacidad de interacción** y **Fiabilidad** son imprescindibles por el contexto de uso documentado en el SRS (1.3): la persona lo usa desde el celular, en el jardín, frente a la planta y con conectividad intermitente.
 - **Seguridad de la información** se vuelve crítica porque, aunque el uso sea personal, hay datos que no deben perderse ni quedar expuestos: la bitácora y el stock son el registro de años de trabajo, y el dispositivo puede perderse o ser accedido por terceros.
 - **Mantenibilidad** es crítica porque se eligió el ciclo iterativo-incremental y se decidió postergar Calendario y Clima — el sistema tiene que poder crecer sin reescribirse.
 - **Eficiencia de desempeño** se incluye por las condiciones reales de uso en campo (red lenta, historial que crece con los años, dispositivo móvil de gama media o baja).
@@ -86,7 +86,7 @@ Quedan afuera **Adecuación funcional** (sus escenarios se superponen con las pr
 - **Entorno:** degradado — error no resuelto automáticamente, usuario sin conocimiento técnico para diagnosticarlo.
 - **Respuesta:** el sistema explica, en lenguaje simple, qué pasó y qué opciones tiene el usuario (conservar su versión, descartarla, revisar ambas), sin requerir que contacte a soporte técnico.
 - **Medida de la respuesta:** el 90% de los conflictos de sincronización se resuelven sin ayuda externa, en menos de 2 minutos.
-- **Justificación de criticidad:** dado que el sistema asume trabajo offline con sincronización posterior (RNF02), los conflictos van a ocurrir — si el usuario no entiende qué pasó ni qué hacer, pierde confianza en la herramienta.
+- **Justificación de criticidad:** dado que el sistema asume trabajo offline con sincronización posterior (escenario 3.1), los conflictos van a ocurrir — si el usuario no entiende qué pasó ni qué hacer, pierde confianza en la herramienta.
 
 ---
 
@@ -100,7 +100,7 @@ Quedan afuera **Adecuación funcional** (sus escenarios se superponen con las pr
 - **Entorno:** degradado — sin conexión a internet.
 - **Respuesta:** el sistema permite completar y guardar la entrada localmente sin interrumpir el flujo del usuario, marcándola como pendiente de sincronización.
 - **Medida de la respuesta:** el 100% de las cargas iniciadas sin conexión se completan exitosamente en el dispositivo y quedan visibles como "pendientes de sincronizar" hasta recuperar la red.
-- **Justificación de criticidad:** la conectividad intermitente en el campo es la condición de uso normal del usuario, no una excepción rara — es la razón de ser de RNF02.
+- **Justificación de criticidad:** la conectividad intermitente en el campo es la condición de uso normal del usuario, no una excepción rara. Si el sistema no funciona sin señal, no sirve en el lugar donde más se lo necesita.
 
 
 ### 3.2 — Capacidad de recuperación
@@ -163,7 +163,7 @@ Quedan afuera **Adecuación funcional** (sus escenarios se superponen con las pr
 
 ### 5.1 — Modularidad
 
-- **Estímulo:** el equipo de desarrollo necesita incorporar, en un incremento posterior, el módulo de integración con CropCalendar y estaciones meteorológicas.
+- **Estímulo:** el equipo de desarrollo necesita incorporar, en un incremento posterior, el módulo de integración con Google Calendar y estaciones meteorológicas.
 - **Fuente del estímulo:** equipo de desarrollo, durante un incremento futuro del proyecto.
 - **Artefacto:** arquitectura general del sistema — separación entre los módulos de Stock, Bitácora y el futuro módulo de Calendario/Clima.
 - **Entorno:** significativo — ciclo de vida iterativo-incremental, con alcance no cerrado completamente desde el inicio.
@@ -188,5 +188,5 @@ Quedan afuera **Adecuación funcional** (sus escenarios se superponen con las pr
 - **Artefacto:** módulos de Stock y Bitácora.
 - **Entorno:** significativo — necesidad de validar un cambio antes de que llegue a producción.
 - **Respuesta:** el sistema permite ejecutar un conjunto de pruebas automatizadas sobre las reglas de RF01–RF04 de forma independiente, sin depender de datos de producción ni de intervención manual.
-- **Medida de la respuesta:** las pruebas de RF01–RF04 se ejecutan de punta a punta en menos de unos pocos minutos y detectan cualquier regresión antes del despliegue.
+- **Medida de la respuesta:** las pruebas de RF01–RF04 se ejecutan de punta a punta en menos de 5 minutos, sin intervención manual.
 - **Justificación de criticidad:** en un proyecto de varios TP con entregas sucesivas, sin capacidad de prueba automatizada cada incremento se vuelve más riesgoso de integrar, y el costo de detectar errores tarde crece con cada entrega.

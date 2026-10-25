@@ -27,6 +27,7 @@ Basado en HU-02 **Registrar un nuevo lote de semillas**:
 Login (HU-01)
   └─ Panel de visualización (HU-10, HU-11)
        ├─ Catálogo de especies por mes de siembra (HU-05)
+       │     ├─ Ficha de especie, consulta (RF08)
        │     └─ Alta manual de especie (HU-06) [si la especie buscada no existe]
        ├─ Listado de lotes por especie (HU-02, HU-03, HU-04)
        │     ├─ Formulario alta/edición de lote (HU-02, HU-03)
