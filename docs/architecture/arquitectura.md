@@ -23,7 +23,8 @@ Siglas:
 Se recupera la visión de nivel 0 (Contexto) definida anteriormente. El usuario interactua con el sistema, y este se vincula con servicios externos de clima y notificaciones.
 
 
-´´´C4Context
+```mermaid
+C4Context
     title Diagrama de Contexto - Asistente de Huerta
 
     Person(jardinero, "Jardinero / Usuario", "Persona que gestiona su huerta, stock de semillas y registra observaciones en la bitácora.")
@@ -35,7 +36,7 @@ Se recupera la visión de nivel 0 (Contexto) definida anteriormente. El usuario 
     Rel(jardinero, asistente, "Registra especies, gestiona lotes y escribe notas de campo", "HTTPS")
     Rel(asistente, servicioClima, "Consulta pronóstico y heladas (Diferido)", "HTTPS/JSON")
     Rel(asistente, servicioNotif, "Envía alertas de stock y tareas de siembra", "HTTPS")
-´´´
+```
 
 
 ## Drivers Arquitectonicos
@@ -107,29 +108,36 @@ Aplica unicamente a la zona de sincronizacion en segundo plano. Se tiene mayor c
 ## Vista de Contenedores
 
 ### Diagrama de contenedores
+```mermaid
 C4Container
-    title Vista de Contenedores Global - Asistente de Huerta
+    title Vista de Contenedores - Asistente de Huerta
 
-    Person(jardinero, "Jardinero / Usuario", "Usuario que opera la huerta desde su celular.")
+    Person(jardinero, "Jardinero / Usuario", "Gestiona su huerta, su stock de semillas y su bitácora desde el celular.")
 
     System_Boundary(asistenteBoundary, "Asistente de Huerta") {
-        Container(pwa, "Aplicación PWA / Móvil", "JavaScript / React / HTML5", "Interfaz de usuario, lógica de presentación y captura de datos en campo con soporte offline.")
-        ContainerDb(dbLocal, "Almacén Local", "IndexedDB / SQLite", "Guarda el catálogo local, lotes y notas de la bitácora pendientes de sincronización.")
-        Container(api, "API Backend de Sincronización", "Python / FastAPI", "Procesa autenticación, valida datos y resuelve conflictos de sincronización.")
-        ContainerQueue(colaSync, "Cola de Tareas / Mensajes", "Redis / Background Queue", "Almacena lotes de datos pendientes de procesamiento e integración.")
-        ContainerDb(dbRemota, "Base de Datos Central", "PostgreSQL", "Almacena el catálogo consolidado, respaldo de lotes e historial de bitácora.")
+        Container(app, "Aplicación móvil", "PWA / React", "Interfaz táctil para gestionar lotes y bitácora; opera sin conexión y sincroniza en segundo plano.")
+        ContainerDb(dbLocal, "Almacén local", "IndexedDB (en el dispositivo)", "Copia local de catálogo, lotes y notas, y cambios pendientes de sincronizar.")
+        Container(api, "API de sincronización", "Python / FastAPI", "Autentica, entrega datos consolidados y recibe los lotes de cambios para encolarlos.")
+        ContainerQueue(colaSync, "Cola de sincronización", "Redis con persistencia en disco (AOF)", "Retiene los lotes de cambios recibidos hasta que se procesan.")
+        Container(procesador, "Procesador de sincronización", "Python / RQ", "Resuelve conflictos de versión y aplica cada lote en la base central.")
+        ContainerDb(dbCentral, "Base de datos central", "PostgreSQL", "Catálogo, lotes, historial de bitácora, versiones y conflictos pendientes.")
     }
 
-    System_Ext(servicioClima, "Servicio Meteorológico", "API REST Externa")
+    System_Ext(servicioNotif, "Servicio de Notificaciones Push", "Envía alertas al celular.")
+    System_Ext(servicioClima, "Servicio Meteorológico (futuro)", "API externa de clima y heladas.")
 
-    Rel(jardinero, pwa, "Consulta y registra datos", "HTTPS / UI Táctil")
-    Rel(pwa, dbLocal, "Lee y escribe datos localmente", "IndexedDB API / Llamada Interna")
-    Rel(pwa, api, "Sincroniza datos acumulados y autentica", "HTTPS / JSON (Síncrono)")
-    Rel(api, colaSync, "Encola lotes de sincronización pesados", "AMQP / Redis Protocol")
-    Rel(api, dbRemota, "Lee y escribe datos consolidados", "SQL / TCP")
-    Rel(colaSync, api, "Consume tareas pendientes", "AMQP / Redis Protocol")
-    Rel(api, servicioClima, "Consulta datos del clima (Futuro)", "HTTPS / JSON")
+    Rel(jardinero, app, "Registra lotes y notas; consulta stock", "HTTPS")
+    Rel(app, dbLocal, "Lee y escribe datos y cambios pendientes", "IndexedDB API")
+    Rel(app, api, "Envía lotes de cambios y descarga datos", "JSON/HTTPS")
+    Rel(api, dbCentral, "Lee datos consolidados y registra lotes recibidos", "SQL")
+    Rel(api, colaSync, "Publica lotes de cambios", "Protocolo Redis")
+    Rel(procesador, colaSync, "Consume lotes de cambios", "Protocolo Redis")
+    Rel(procesador, dbCentral, "Aplica cambios en una transacción", "SQL")
+    Rel(procesador, servicioNotif, "Pide alertas de stock bajo y de conflictos", "HTTPS")
+    Rel(api, servicioClima, "Consulta pronóstico (futuro)", "JSON/HTTPS")
 
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+```
 
 ### Catalogo de la Vista de Contenedores
 
@@ -156,33 +164,38 @@ C4Container
 ## Vista de Componentes
 Se realiza un zoom sobre el contenedor princial de logica se servidor: API Backend de Sincronizacion
 
+```mermaid
 C4Component
-    title Vista de Componentes - API Backend de Sincronización
+    title Vista de Componentes - Aplicación móvil
 
-    Container_Boundary(apiBoundary, "API Backend de Sincronización") {
-        Component(controladores, "Controladores REST", "FastAPI Routers", "Recibe y mapea las solicitudes HTTP desde la PWA.")
-        Component(auth, "Módulo de Autenticación", "JWT / Security", "Valida tokens y credenciales del usuario.")
-        Component(servicioStock, "Servicio de Gestión de Stock", "Lógica de Negocio", "Aplica reglas de negocio de lotes, alertas de stock bajo y bajas.")
-        Component(servicioBitacora, "Servicio de Bitácora", "Lógica de Negocio", "Gestiona la línea de tiempo de notas de campo y fotos.")
-        Component(motorSync, "Motor de Resolución de Conflictos", "Lógica de Sincronización", "Compara versiones (timestamps) y resuelve divergencias de datos.")
-        Component(accesoDatos, "Capa de Acceso a Datos (ORM)", "SQLAlchemy", "Ejecuta transacciones SQL atómicas sobre PostgreSQL.")
-        Component(publicadorCola, "Publicador de Eventos", "Redis Client", "Publica mensajes de tareas pesadas en la cola.")
+    Person(jardinero, "Jardinero / Usuario", "Usa la aplicación en la huerta.")
+
+    Container_Boundary(appBoundary, "Aplicación móvil") {
+        Component(vistas, "Vistas de stock y bitácora", "Componentes React", "Pantallas táctiles: formularios de lote y nota, listados y alertas.")
+        Component(vmStock, "Modelo de vista de stock", "Estado React", "Valida lotes, calcula la alerta de stock bajo y expone el estado a la vista.")
+        Component(vmBitacora, "Modelo de vista de bitácora", "Estado React", "Gestiona las notas de campo y su línea de tiempo.")
+        Component(repoLocal, "Repositorio local", "JavaScript", "Encapsula lecturas y escrituras locales y marca cambios como pendientes.")
+        Component(cifrado, "Cifrado local", "Web Crypto API (AES)", "Cifra y descifra los datos sensibles guardados en el dispositivo.")
+        Component(gestorSync, "Gestor de sincronización", "Service Worker / Background Sync", "Detecta la conexión, arma lotes acotados y los envía sin bloquear la interfaz.")
+        Component(clienteApi, "Cliente de la API", "fetch + token JWT", "Envía y recibe JSON por HTTPS adjuntando el token de sesión.")
     }
 
-    Container(pwa, "Aplicación PWA / Móvil", "React")
-    ContainerDb(dbRemota, "Base de Datos Central", "PostgreSQL")
-    ContainerQueue(colaSync, "Cola de Tareas", "Redis")
+    ContainerDb(dbLocal, "Almacén local", "IndexedDB")
+    Container(api, "API de sincronización", "Python / FastAPI")
 
-    Rel(pwa, controladores, "Envía peticiones y lotes acumulados", "HTTPS / JSON")
-    Rel(controladores, auth, "Verifica token de sesión", "Invocación Interna")
-    Rel(controladores, servicioStock, "Delega operaciones de lotes", "Invocación Interna")
-    Rel(controladores, servicioBitacora, "Delega operaciones de bitácora", "Invocación Interna")
-    Rel(servicioBitacora, motorSync, "Solicita resolución de conflictos", "Invocación Interna")
-    Rel(servicioStock, accesoDatos, "Lee y guarda lotes", "Invocación Interna")
-    Rel(servicioBitacora, accesoDatos, "Lee y guarda notas", "Invocación Interna")
-    Rel(motorSync, publicadorCola, "Encola tareas de fondo si aplica", "Invocación Interna")
-    Rel(accesoDatos, dbRemota, "Consultas y transacciones", "SQL")
-    Rel(publicadorCola, colaSync, "Publica eventos de sincronización", "Redis Protocol")
+    Rel(jardinero, vistas, "Usa", "HTTPS")
+    Rel(vistas, vmStock, "Enlaza datos y acciones de stock")
+    Rel(vistas, vmBitacora, "Enlaza datos y acciones de bitácora")
+    Rel(vmStock, repoLocal, "Lee y guarda lotes")
+    Rel(vmBitacora, repoLocal, "Lee y guarda notas")
+    Rel(repoLocal, cifrado, "Cifra y descifra datos sensibles")
+    Rel(repoLocal, dbLocal, "Lee y escribe", "IndexedDB API")
+    Rel(gestorSync, repoLocal, "Lee pendientes y actualiza su estado")
+    Rel(gestorSync, clienteApi, "Envía lotes y consulta su estado")
+    Rel(clienteApi, api, "Envía lotes y descarga datos", "JSON/HTTPS")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+```
 
 
 ### Catalogo de la Vista de Componentes
