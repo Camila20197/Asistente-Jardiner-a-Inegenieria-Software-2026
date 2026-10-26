@@ -41,6 +41,10 @@ C4Context
     UpdateRelStyle(jardinero, asistente, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-115")
     UpdateRelStyle(asistente, servicioClima, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="-70")
     UpdateRelStyle(asistente, servicioNotif, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateElementStyle(jardinero, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(asistente, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(servicioClima, $bgColor="#737171", $borderColor="#737171")
+    UpdateElementStyle(servicioNotif, $bgColor="#737171", $borderColor="#737171")
     UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
 
@@ -161,6 +165,15 @@ C4Container
     UpdateRelStyle(procesador, dbCentral, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="55")
     UpdateRelStyle(procesador, servicioNotif, $textColor="#F59E0B", $lineColor="#F59E0B")
     UpdateRelStyle(api, servicioClima, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-150", $offsetX="30")
+    UpdateElementStyle(jardinero, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(servicioClima, $bgColor="#737171", $borderColor="#737171")
+    UpdateElementStyle(app, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(dbLocal, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(api, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(colaSync, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(dbCentral, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(procesador, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(servicioNotif, $bgColor="#737171", $borderColor="#737171")
     UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
 **Comprobación de restricciones de los estilos (Tabla 4):**
@@ -480,6 +493,19 @@ C4Deployment
     Rel(api, colaSync, "Publica lotes de cambios", "Redis Protocol (Red interna Docker)")
     Rel(procesador, colaSync, "Consume lotes de cambios", "Redis Protocol (Red interna Docker)")
     Rel(procesador, dbCentral, "Aplica cambios y resuelve conflictos", "SQL (Red interna Docker)")
+
+    UpdateRelStyle(app, dbLocal, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(app, api, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-95", $offsetX="-40")
+    UpdateRelStyle(api, dbCentral, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="-150")
+    UpdateRelStyle(api, colaSync, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="-95")
+    UpdateRelStyle(procesador, colaSync, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="95")
+    UpdateRelStyle(procesador, dbCentral, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateElementStyle(app, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(dbLocal, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(api, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(colaSync, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(procesador, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(dbCentral, $bgColor="#1F5FAD", $borderColor="#174A87")
 ```
 
 ### Catálogo de Nodos de Despliegue
