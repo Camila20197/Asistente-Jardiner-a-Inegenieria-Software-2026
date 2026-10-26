@@ -24,18 +24,24 @@ Se recupera la visión de nivel 0 (Contexto) definida anteriormente. El usuario 
 
 
 ```mermaid
+%%{init: {"wrap": true}}%%
 C4Context
     title Diagrama de Contexto - Asistente de Huerta
 
-    Person(jardinero, "Jardinero / Usuario", "Persona que gestiona su huerta, stock de semillas y registra observaciones en la bitácora.")
-    System(asistente, "Asistente de Huerta", "Permite gestionar el catálogo de especies, lotes de semillas y bitácora de campo con soporte offline.")
-    
-    System_Ext(servicioClima, "Servicio Meteorológico (Futuro)", "API externa proveedora de datos de clima y alertas de heladas.")
-    System_Ext(servicioNotif, "Servicio de Notificaciones Push", "Servicio externo para envío de alertas móviles.")
+    Person(jardinero, "Jardinero / Usuario", "Gestiona su huerta, su stock de semillas y su bitácora.")
+    System(asistente, "Asistente de Huerta", "Catálogo de especies, lotes de semillas y bitácora de campo, con soporte offline.")
 
-    Rel(jardinero, asistente, "Registra especies, gestiona lotes y escribe notas de campo", "HTTPS")
-    Rel(asistente, servicioClima, "Consulta pronóstico y heladas (Diferido)", "HTTPS/JSON")
-    Rel(asistente, servicioNotif, "Envía alertas de stock y tareas de siembra", "HTTPS")
+    System_Ext(servicioClima, "Servicio Meteorológico (futuro)", "API externa de clima y alertas de heladas.")
+    System_Ext(servicioNotif, "Servicio de Notificaciones Push", "Envío de alertas móviles.")
+
+    Rel(jardinero, asistente, "Registra especies, lotes y notas", "HTTPS")
+    Rel(asistente, servicioClima, "Consulta pronóstico (diferido)", "JSON/HTTPS")
+    Rel(asistente, servicioNotif, "Envía alertas de stock y siembra", "HTTPS")
+
+    UpdateRelStyle(jardinero, asistente, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-115")
+    UpdateRelStyle(asistente, servicioClima, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="-70")
+    UpdateRelStyle(asistente, servicioNotif, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
 
 
@@ -113,97 +119,130 @@ Aplica unicamente a la zona de sincronizacion en segundo plano. Se tiene mayor c
 
 
 ## Vista de Contenedores
-
+Vista global y única del sistema. Implementa el estilo base **cliente-servidor con persistencia local (Local-First)** y, solo en la zona de sincronización, el estilo **orientado a eventos** con patrón broker (DA-01, DA-02). El Servicio Meteorológico se mantiene como caja negra (integración futura).
 ### Diagrama de contenedores
 ```mermaid
+%%{init: {"wrap": true}}%%
 C4Container
     title Vista de Contenedores - Asistente de Huerta
 
-    Person(jardinero, "Jardinero / Usuario", "Gestiona su huerta, su stock de semillas y su bitácora desde el celular.")
+    Person(jardinero, "Jardinero / Usuario", "Gestiona su huerta, stock y bitácora desde el celular.")
+    System_Ext(servicioClima, "Servicio Meteorológico (futuro)", "API externa de clima.")
 
     System_Boundary(asistenteBoundary, "Asistente de Huerta") {
-        Container(app, "Aplicación móvil", "PWA / React", "Interfaz táctil para gestionar lotes y bitácora; opera sin conexión y sincroniza en segundo plano.")
-        ContainerDb(dbLocal, "Almacén local", "IndexedDB (en el dispositivo)", "Copia local de catálogo, lotes y notas, y cambios pendientes de sincronizar.")
-        Container(api, "API de sincronización", "Python / FastAPI", "Autentica, entrega datos consolidados y recibe los lotes de cambios para encolarlos.")
-        ContainerQueue(colaSync, "Cola de sincronización", "Redis con persistencia en disco (AOF)", "Retiene los lotes de cambios recibidos hasta que se procesan.")
-        Container(procesador, "Procesador de sincronización", "Python / RQ", "Resuelve conflictos de versión y aplica cada lote en la base central.")
-        ContainerDb(dbCentral, "Base de datos central", "PostgreSQL", "Catálogo, lotes, historial de bitácora, versiones y conflictos pendientes.")
+        Container(app, "Aplicación móvil", "PWA / React", "Interfaz táctil; opera sin conexión y sincroniza en segundo plano.")
+        ContainerDb(dbLocal, "Almacén local", "IndexedDB", "Datos locales y cambios pendientes de sincronizar.")
+        Container(api, "API de sincronización", "Python / FastAPI", "Autentica, entrega datos y encola lotes de cambios.")
+        ContainerQueue(colaSync, "Cola de sincronización", "Redis durable (AOF)", "Retiene los lotes hasta procesarlos.")
+        ContainerDb(dbCentral, "Base de datos central", "PostgreSQL", "Catálogo, lotes, bitácora, versiones y conflictos.")
+        Container(procesador, "Procesador de sincronización", "Python / RQ", "Resuelve conflictos y aplica cada lote.")
     }
 
-    System_Ext(servicioNotif, "Servicio de Notificaciones Push", "Envía alertas al celular.")
-    System_Ext(servicioClima, "Servicio Meteorológico (futuro)", "API externa de clima y heladas.")
+    Boundary(externos, "Sistemas externos") {
+        System_Ext(servicioNotif, "Servicio de Notificaciones Push", "Alertas al celular.")
+    }
 
-    Rel(jardinero, app, "Registra lotes y notas; consulta stock", "HTTPS")
-    Rel(app, dbLocal, "Lee y escribe datos y cambios pendientes", "IndexedDB API")
-    Rel(app, api, "Envía lotes de cambios y descarga datos", "JSON/HTTPS")
-    Rel(api, dbCentral, "Lee datos consolidados y registra lotes recibidos", "SQL")
-    Rel(api, colaSync, "Publica lotes de cambios", "Protocolo Redis")
-    Rel(procesador, colaSync, "Consume lotes de cambios", "Protocolo Redis")
-    Rel(procesador, dbCentral, "Aplica cambios en una transacción", "SQL")
-    Rel(procesador, servicioNotif, "Pide alertas de stock bajo y de conflictos", "HTTPS")
-    Rel(api, servicioClima, "Consulta pronóstico (futuro)", "JSON/HTTPS")
+    Rel(jardinero, app, "Registra y consulta", "HTTPS")
+    Rel(app, dbLocal, "Lee y escribe", "IndexedDB")
+    Rel(app, api, "Envía lotes y descarga datos", "JSON/HTTPS")
+    Rel(api, dbCentral, "Lee datos y registra lotes", "SQL")
+    Rel(api, colaSync, "Publica lotes", "Redis")
+    Rel(procesador, colaSync, "Consume lotes", "Redis")
+    Rel(procesador, dbCentral, "Aplica cambios (transacción)", "SQL")
+    Rel(procesador, servicioNotif, "Pide alertas", "HTTPS")
+    Rel(api, servicioClima, "Consulta pronóstico", "JSON/HTTPS")
 
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    UpdateRelStyle(jardinero, app, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-45")
+    UpdateRelStyle(app, dbLocal, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-95")
+    UpdateRelStyle(app, api, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(api, dbCentral, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="-70")
+    UpdateRelStyle(api, colaSync, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="75", $offsetX="25")
+    UpdateRelStyle(procesador, colaSync, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(procesador, dbCentral, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="55")
+    UpdateRelStyle(procesador, servicioNotif, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(api, servicioClima, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-150", $offsetX="30")
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
+**Comprobación de restricciones de los estilos (Tabla 4):**
 
+* Cliente-servidor: la Aplicación móvil siempre inicia la comunicación; no hay flechas desde la API ni desde la Base de datos central hacia el cliente; el cliente no accede a la Base de datos central (solo a su Almacén local). El aviso al usuario sale por el Servicio de Notificaciones Push, que es la excepción permitida (notificaciones).
+* Orientada a eventos (zona de sincronización): la API (productor) y el Procesador de sincronización (consumidor) no se llaman entre sí; los dos se conectan solo a la Cola de sincronización. La API no espera el procesamiento: responde "202 Aceptado" apenas encola. Si un lote no se procesa, se reintenta (ver aspectos transversales).
+* La cola es durable (persistencia en disco) porque EC-03 exige 0% de pérdida: un lote recibido no puede perderse si Redis se reinicia.
 ### Catalogo de la Vista de Contenedores
 
 #### Catalogo de contenedores
-|Contenedor	|Tecnología	|Responsabilidad|
+| Contenedor | Tecnología | Responsabilidad |
 |---|---|---|
-|Aplicación PWA / Móvil	|React /JS / HTML5|	Interfaz de usuario táctil ergonómica. Permite operar sin conexión.|
-|Almacén Local	|IndexedDB / Browser DB	|Guarda la copia local del catálogo, stock y notas pendientes de sincronizar.|
-|API Backend de Sincronización|	Python / FastAPI	|Procesa las solicitudes síncronas, valida reglas de negocio y resuelve conflictos.|
-|Cola de Tareas / Mensajes|	Redis / Queue	|Gestiona tareas asincrónicas y lotes de sincronización pesados.|
-|Base de Datos Central|	PostgreSQL|	Almacenamiento persistente y relacional centralizado de todos los datos del usuario.|
+| Aplicación móvil | PWA / React | Interfaz táctil. Permite registrar lotes y notas sin conexión y sincroniza en segundo plano al recuperar la red. |
+| Almacén local | IndexedDB (en el dispositivo) | Guarda la copia local del catálogo, el stock y las notas, y los cambios marcados como pendientes de sincronizar. |
+| API de sincronización | Python / FastAPI | Autentica al usuario, entrega datos consolidados al dispositivo y recibe los lotes de cambios para encolarlos. |
+| Cola de sincronización | Redis con persistencia en disco | Retiene los lotes de cambios hasta que el Procesador los toma y confirma que terminó. |
+| Procesador de sincronización | Python / RQ | Toma cada lote de la cola, resuelve conflictos de versión, aplica las reglas de negocio y guarda en una transacción. |
+| Base de datos central | PostgreSQL | Almacenamiento persistente de catálogo, lotes, bitácora, versiones, estado de cada lote recibido y conflictos pendientes. |
 
 
 #### Catalogo de Relaciones entre Contenedores
-|Origen|Destino|Qué se comunica|Tipo|Protocolo|
+| Origen | Destino | Qué se comunica | Tipo | Protocolo |
 |---|---|---|---|---|
-|Jardinero|Aplicación PWA| Uso de la interfaz móvil| Persona $\rightarrow$ |ContenedorHTTPS / Táctil|
-|Aplicación PWA| Almacén Local| Lectura y escritura de notas/lotes offline| Síncrono (Interno)| IndexedDB API|
-| Aplicación PWA| API Backend| Envío de lotes guardados y sincronización| Síncrono / HTTPS| REST (JSON)|
-|API Backend| Cola de Tareas| Encolado de lotes para procesamiento asincrónico| Asíncrono| Redis Protocol| 
-|API Backend| Base de Datos Central| Consultas, actualizaciones y transacciones| Acceso a Datos| SQL|
-|API Backend| Servicio Meteorológico| Consulta diferida de clima y alertas| Integración Externa| HTTPS / REST|
+| Jardinero / Usuario | Aplicación móvil | Uso de la interfaz: registro de lotes y notas, consultas | Persona hacia contenedor | HTTPS |
+| Aplicación móvil | Almacén local | Lectura y escritura de datos y cambios pendientes | Acceso a datos (local) | IndexedDB API |
+| Aplicación móvil | API de sincronización | Envío de lotes de cambios; descarga de datos consolidados y del estado de cada lote | Síncrona | JSON sobre HTTPS |
+| API de sincronización | Base de datos central | Lectura de datos consolidados; registro y consulta del estado de los lotes recibidos | Acceso a datos | SQL |
+| API de sincronización | Cola de sincronización | Publicación de lotes de cambios | Asincrónica | Protocolo Redis |
+| Procesador de sincronización | Cola de sincronización | Toma de lotes pendientes y confirmación de procesamiento | Asincrónica | Protocolo Redis |
+| Procesador de sincronización | Base de datos central | Escritura de cambios y conflictos en una transacción | Acceso a datos | SQL |
+| Procesador de sincronización | Servicio de Notificaciones Push | Pedido de alertas de stock bajo y de conflictos | Integración externa | HTTPS |
+| API de sincronización | Servicio Meteorológico | Consulta de pronóstico (futuro, caja negra) | Integración externa | JSON sobre HTTPS |
 
 ## Vista de Componentes
 Se realiza un zoom sobre el contenedor princial de logica se servidor: API Backend de Sincronizacion
 
 ```mermaid
+%%{init: {"wrap": true}}%%
 C4Component
     title Vista de Componentes - Aplicación móvil
 
     Person(jardinero, "Jardinero / Usuario", "Usa la aplicación en la huerta.")
 
     Container_Boundary(appBoundary, "Aplicación móvil") {
-        Component(vistas, "Vistas de stock y bitácora", "Componentes React", "Pantallas táctiles: formularios de lote y nota, listados y alertas.")
-        Component(vmStock, "Modelo de vista de stock", "Estado React", "Valida lotes, calcula la alerta de stock bajo y expone el estado a la vista.")
-        Component(vmBitacora, "Modelo de vista de bitácora", "Estado React", "Gestiona las notas de campo y su línea de tiempo.")
-        Component(repoLocal, "Repositorio local", "JavaScript", "Encapsula lecturas y escrituras locales y marca cambios como pendientes.")
-        Component(cifrado, "Cifrado local", "Web Crypto API (AES)", "Cifra y descifra los datos sensibles guardados en el dispositivo.")
-        Component(gestorSync, "Gestor de sincronización", "Service Worker / Background Sync", "Detecta la conexión, arma lotes acotados y los envía sin bloquear la interfaz.")
-        Component(clienteApi, "Cliente de la API", "fetch + token JWT", "Envía y recibe JSON por HTTPS adjuntando el token de sesión.")
+        Component(vistas, "Vistas de stock y bitácora", "Componentes React", "Pantallas táctiles: formularios, listados y alertas.")
+        Component(cifrado, "Cifrado local", "Web Crypto API (AES)", "Cifra y descifra los datos sensibles guardados.")
+        Component(modelosVista, "Modelos de vista de stock y bitácora", "Estado React", "Validan lotes y notas, calculan stock bajo y exponen el estado.")
+        Component(gestorSync, "Gestor de sincronización", "Service Worker", "Envía los cambios pendientes en segundo plano.")
+        Component(repoLocal, "Repositorio local", "JavaScript", "Encapsula el almacén local y marca cambios pendientes.")
+        Component(clienteApi, "Cliente de la API", "fetch + JWT", "Envía y recibe JSON por HTTPS con el token.")
     }
 
-    ContainerDb(dbLocal, "Almacén local", "IndexedDB")
-    Container(api, "API de sincronización", "Python / FastAPI")
+    Boundary(vecinos, "Contenedores vecinos") {
+        ContainerDb(dbLocal, "Almacén local", "IndexedDB")
+        Container(api, "API de sincronización", "Python / FastAPI")
+    }
 
     Rel(jardinero, vistas, "Usa", "HTTPS")
-    Rel(vistas, vmStock, "Enlaza datos y acciones de stock")
-    Rel(vistas, vmBitacora, "Enlaza datos y acciones de bitácora")
-    Rel(vmStock, repoLocal, "Lee y guarda lotes")
-    Rel(vmBitacora, repoLocal, "Lee y guarda notas")
-    Rel(repoLocal, cifrado, "Cifra y descifra datos sensibles")
-    Rel(repoLocal, dbLocal, "Lee y escribe", "IndexedDB API")
-    Rel(gestorSync, repoLocal, "Lee pendientes y actualiza su estado")
-    Rel(gestorSync, clienteApi, "Envía lotes y consulta su estado")
+    Rel(vistas, modelosVista, "Enlaza datos y acciones")
+    Rel(modelosVista, repoLocal, "Lee y guarda lotes y notas")
+    Rel(repoLocal, cifrado, "Cifra y descifra")
+    Rel(repoLocal, dbLocal, "Lee y escribe", "IndexedDB")
+    Rel(gestorSync, repoLocal, "Lee pendientes y actualiza estado")
+    Rel(gestorSync, clienteApi, "Envía lotes y consulta estado")
     Rel(clienteApi, api, "Envía lotes y descarga datos", "JSON/HTTPS")
 
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    UpdateRelStyle(jardinero, vistas, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-40")
+    UpdateRelStyle(vistas, modelosVista, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(modelosVista, repoLocal, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(repoLocal, cifrado, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="-90")
+    UpdateRelStyle(repoLocal, dbLocal, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(gestorSync, repoLocal, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-45")
+    UpdateRelStyle(gestorSync, clienteApi, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(clienteApi, api, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateElementStyle(vistas, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(cifrado, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(modelosVista, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(gestorSync, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(repoLocal, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(clienteApi, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
-
 
 ### Catalogo de la Vista de Componentes
 |Componente| Tecnología| Responsabilidad| 
@@ -215,6 +254,212 @@ C4Component
 |Motor de Resolución de Conflictos| Python| Detecta colisiones de fechas/versiones entre el cliente y el servidor (EC-03).|
 |Capa de Acceso a Datos| SQLAlchemy ORM| Encapsula el acceso a la Base de Datos Central con soporte de transacciones atómicas.|
 |Publicador de Eventos| Redis Client| Envía mensajes asincrónicos hacia la Cola de Tareas cuando se requieren procesamientos diferidos.|
+
+#### Catálogo de componentes de la Aplicación móvil
+
+| Componente | Tecnología | Responsabilidad | Origen (trazabilidad) |
+|---|---|---|---|
+| Vistas de stock y bitácora | Componentes React | Mostrar formularios, listados y alertas; capturar las acciones del usuario. | RF01–RF06 |
+| Modelos de vista de stock y bitácora | Estado React | Validar lotes y notas, calcular la alerta de stock bajo, ordenar las notas y exponer el estado a las Vistas. | RF01–RF06 |
+| Repositorio local | JavaScript | Encapsular el acceso al Almacén local y marcar cada cambio como "pendiente_sync". | DA-01 (EC-01) |
+| Cifrado local | Web Crypto API (AES) | Aspecto transversal: cifrar los datos sensibles en reposo. | EC-04 |
+| Gestor de sincronización | Service Worker / Background Sync | Enviar los cambios pendientes en lotes acotados, en segundo plano, y reintentar si falla la red. | DA-02 (EC-02) |
+| Cliente de la API | fetch + JWT | Aspecto transversal de autenticación del lado cliente: adjuntar el token y comunicarse por HTTPS. | EC-04 |
+
+#### Catálogo de relaciones de la Aplicación móvil
+
+| Origen | Destino | Qué se comunica | Tipo | Protocolo |
+|---|---|---|---|---|
+| Jardinero / Usuario | Vistas de stock y bitácora | Uso de la interfaz | Persona hacia componente | HTTPS |
+| Vistas de stock y bitácora | Modelos de vista de stock y bitácora | Enlace de datos y acciones del usuario | Llamada interna | — |
+| Modelos de vista de stock y bitácora | Repositorio local | Lectura y guardado de lotes y notas | Llamada interna | — |
+| Repositorio local | Cifrado local | Cifrado y descifrado de datos sensibles | Llamada interna | — |
+| Repositorio local | Almacén local | Lectura y escritura | Acceso a datos | IndexedDB API |
+| Gestor de sincronización | Repositorio local | Lectura de pendientes y actualización de estado | Llamada interna | — |
+| Gestor de sincronización | Cliente de la API | Envío de lotes y consulta de estado | Llamada interna | — |
+| Cliente de la API | API de sincronización | Lotes de cambios, descarga de datos y estado de lotes | Síncrona | JSON sobre HTTPS |
+
+
+### 2. Componentes de la API de sincronización
+
+Patrón: **Capas** (presentación → servicios → acceso a datos). Aspecto transversal: autenticación y autorización.
+
+Las escrituras del usuario no se aplican en la API: llegan como lotes de cambios y se encolan (DA-02). La API solo lee datos consolidados y registra el estado de cada lote recibido.
+
+```mermaid
+%%{init: {"wrap": true}}%%
+C4Component
+    title Vista de Componentes - API de sincronización
+
+    Container(app, "Aplicación móvil", "PWA / React")
+
+    Container_Boundary(apiBoundary, "API de sincronización") {
+        Component(controladores, "Controladores REST", "Routers FastAPI", "Presentación: reciben solicitudes HTTPS y responden JSON.")
+        Component(auth, "Autenticación y autorización", "Middleware JWT", "Transversal: valida el token y el acceso a datos propios.")
+        Component(servConsultas, "Servicio de consultas de stock y bitácora", "Python", "Servicios: entrega lotes, catálogo y notas consolidados.")
+        Component(receptor, "Receptor de sincronización", "Python", "Servicios: valida formato y versiones del lote, lo registra y lo encola.")
+        Component(accesoDatos, "Acceso a datos", "SQLAlchemy", "Datos: consultas sobre la base central.")
+        Component(publicador, "Publicador de lotes", "Cliente Redis", "Datos: publica los lotes en la cola.")
+    }
+
+    Boundary(vecinos, "Contenedores vecinos") {
+        ContainerDb(dbCentral, "Base de datos central", "PostgreSQL")
+        ContainerQueue(colaSync, "Cola de sincronización", "Redis")
+    }
+
+    Rel(app, controladores, "Envía lotes y solicita datos", "JSON/HTTPS")
+    Rel(controladores, auth, "Verifica token")
+    Rel(controladores, servConsultas, "Invoca consultas")
+    Rel(controladores, receptor, "Entrega lote")
+    Rel(servConsultas, accesoDatos, "Lee datos")
+    Rel(receptor, accesoDatos, "Registra y consulta estado")
+    Rel(receptor, publicador, "Encola lote validado")
+    Rel(accesoDatos, dbCentral, "Lee y escribe", "SQL")
+    Rel(publicador, colaSync, "Publica lote", "Redis")
+
+    UpdateRelStyle(app, controladores, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-50")
+    UpdateRelStyle(controladores, auth, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="-25")
+    UpdateRelStyle(controladores, servConsultas, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(controladores, receptor, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(servConsultas, accesoDatos, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(receptor, accesoDatos, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(receptor, publicador, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(accesoDatos, dbCentral, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(publicador, colaSync, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateElementStyle(controladores, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(auth, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(servConsultas, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(receptor, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(accesoDatos, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(publicador, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
+```
+
+**Comprobación del patrón Capas (Tabla 6):** todas las flechas entre capas van hacia abajo (Controladores → Servicios → Acceso a datos / Publicador). Ninguna capa inferior llama a una superior y no se saltean capas: los Controladores no acceden directamente a los datos. La autenticación es un aspecto transversal que usan los Controladores.
+
+#### Catálogo de componentes de la API de sincronización
+
+| Componente | Tecnología | Responsabilidad | Origen (trazabilidad) |
+|---|---|---|---|
+| Controladores REST | Routers FastAPI | Exponer los endpoints HTTPS; recibir lotes y solicitudes de datos; responder "202 Aceptado" al encolar. | DA-03 |
+| Autenticación y autorización | Middleware JWT | Validar la identidad del usuario y restringir el acceso a sus propios datos. | EC-04 |
+| Servicio de consultas de stock y bitácora | Python | Entregar al dispositivo los lotes, el catálogo y el historial de notas consolidados. | RF01–RF06 |
+| Receptor de sincronización | Python | Validar formato y versiones de cada lote, registrarlo como "recibido" y encolarlo; informar su estado. | DA-02 (EC-02, EC-03) |
+| Acceso a datos | SQLAlchemy | Encapsular las consultas sobre la Base de datos central. | DA-03 (EC-05) |
+| Publicador de lotes | Cliente Redis | Publicar los lotes validados en la Cola de sincronización. | DA-02 (EC-02) |
+
+#### Catálogo de relaciones de la API de sincronización
+
+| Origen | Destino | Qué se comunica | Tipo | Protocolo |
+|---|---|---|---|---|
+| Aplicación móvil | Controladores REST | Lotes de cambios y solicitudes de datos | Síncrona | JSON sobre HTTPS |
+| Controladores REST | Autenticación y autorización | Verificación de token y permisos | Llamada interna | — |
+| Controladores REST | Servicio de consultas de stock y bitácora | Consultas de datos consolidados | Llamada interna | — |
+| Controladores REST | Receptor de sincronización | Lote de cambios recibido | Llamada interna | — |
+| Servicio de consultas de stock y bitácora | Acceso a datos | Lectura de lotes, catálogo y notas | Llamada interna | — |
+| Receptor de sincronización | Acceso a datos | Registro y consulta del estado del lote | Llamada interna | — |
+| Receptor de sincronización | Publicador de lotes | Lote validado para encolar | Llamada interna | — |
+| Acceso a datos | Base de datos central | Consultas y escrituras | Acceso a datos | SQL |
+| Publicador de lotes | Cola de sincronización | Publicación del lote | Asincrónica | Protocolo Redis |
+
+
+### 3. Componentes del Procesador de sincronización
+
+Patrón: **Broker** (lado consumidor). Aspectos transversales: gestión de excepciones con reintento y notificaciones. Aquí se aplican las tácticas de rollback, transacciones y versionado de EC-03 y EC-04.
+
+```mermaid
+%%{init: {"wrap": true}}%%
+C4Component
+    title Vista de Componentes - Procesador de sincronización
+
+    ContainerQueue(colaSync, "Cola de sincronización", "Redis")
+
+    Container_Boundary(procBoundary, "Procesador de sincronización") {
+        Component(consumidor, "Consumidor de lotes", "RQ worker", "Toma cada lote y confirma al terminar.")
+        Component(excepciones, "Manejo de excepciones", "Python", "Transversal: reintenta y registra lotes fallidos.")
+        Component(motorConflictos, "Motor de resolución de conflictos", "Python", "Compara versiones y separa los conflictos para revisión.")
+        Component(aplicador, "Aplicador de cambios", "Python", "Aplica reglas de lotes y notas; detecta stock bajo.")
+        Component(accesoTx, "Acceso a datos transaccional", "SQLAlchemy", "Una transacción por lote: todo o nada.")
+        Component(notificador, "Notificador", "Python", "Transversal: pide alertas push.")
+    }
+
+    Boundary(vecinos, "Contenedores y sistemas vecinos") {
+        ContainerDb(dbCentral, "Base de datos central", "PostgreSQL")
+        System_Ext(servicioNotif, "Servicio de Notificaciones Push", "Alertas móviles")
+    }
+
+    Rel(consumidor, colaSync, "Consume y confirma lotes", "Redis")
+    Rel(consumidor, excepciones, "Delega fallos")
+    Rel(consumidor, motorConflictos, "Entrega lote")
+    Rel(motorConflictos, aplicador, "Pasa cambios sin conflicto")
+    Rel(motorConflictos, accesoTx, "Lee versiones y registra conflictos")
+    Rel(motorConflictos, notificador, "Pide aviso de conflicto")
+    Rel(aplicador, accesoTx, "Escribe cambios")
+    Rel(aplicador, notificador, "Pide alerta de stock bajo")
+    Rel(accesoTx, dbCentral, "Lee y escribe", "SQL")
+    Rel(notificador, servicioNotif, "Envía alerta", "HTTPS")
+
+    UpdateRelStyle(consumidor, colaSync, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-50")
+    UpdateRelStyle(consumidor, excepciones, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="-12")
+    UpdateRelStyle(consumidor, motorConflictos, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(motorConflictos, aplicador, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-105")
+    UpdateRelStyle(motorConflictos, accesoTx, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetX="-60")
+    UpdateRelStyle(motorConflictos, notificador, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="-25")
+    UpdateRelStyle(aplicador, accesoTx, $textColor="#F59E0B", $lineColor="#F59E0B", $offsetY="30")
+    UpdateRelStyle(aplicador, notificador, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(accesoTx, dbCentral, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateRelStyle(notificador, servicioNotif, $textColor="#F59E0B", $lineColor="#F59E0B")
+    UpdateElementStyle(consumidor, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(excepciones, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(motorConflictos, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(aplicador, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(accesoTx, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateElementStyle(notificador, $bgColor="#1F5FAD", $borderColor="#174A87")
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
+```
+
+**Comprobación del patrón Broker (Tabla 6):** el Consumidor de lotes se conecta solo a la Cola de sincronización, nunca a la API. Los mensajes tienen formato definido (lote JSON con usuario, entidad, operación, versión y marca de tiempo). La entrega es "al menos una vez": el lote se elimina de la cola recién cuando el Consumidor confirma; por eso el procesamiento es idempotente (aplicar dos veces el mismo lote no duplica datos, gracias al identificador y la versión de cada cambio).
+
+#### Catálogo de componentes del Procesador de sincronización
+
+| Componente | Tecnología | Responsabilidad | Origen (trazabilidad) |
+|---|---|---|---|
+| Consumidor de lotes | RQ worker | Tomar lotes de la cola y confirmar al terminar. | DA-02 (EC-02) |
+| Manejo de excepciones | Python | Aspecto transversal: reintentar hasta 3 veces y registrar como fallido el lote que no se pudo aplicar, sin perderlo. | EC-03 |
+| Motor de resolución de conflictos | Python | Detectar divergencias de versión entre lo cargado offline y lo guardado, y registrarlas para revisión. | EC-03 |
+| Aplicador de cambios | Python | Aplicar reglas de negocio de lotes (RF01–RF04) y notas (RF05–RF06); detectar stock bajo (RF03). | RF01–RF06 |
+| Acceso a datos transaccional | SQLAlchemy | Ejecutar cada lote en una única transacción con rollback completo ante error; mantener versión y last_modified. | EC-03, EC-04 |
+| Notificador | Python | Aspecto transversal: pedir al servicio externo las alertas de stock bajo y de conflictos. | RF03, EC-03 |
+
+#### Catálogo de relaciones del Procesador de sincronización
+
+| Origen | Destino | Qué se comunica | Tipo | Protocolo |
+|---|---|---|---|---|
+| Consumidor de lotes | Cola de sincronización | Toma y confirmación de lotes | Asincrónica | Protocolo Redis |
+| Consumidor de lotes | Manejo de excepciones | Fallos durante el procesamiento | Llamada interna | — |
+| Consumidor de lotes | Motor de resolución de conflictos | Lote a procesar | Llamada interna | — |
+| Motor de resolución de conflictos | Acceso a datos transaccional | Lectura de versiones y registro de conflictos | Llamada interna | — |
+| Motor de resolución de conflictos | Aplicador de cambios | Cambios sin conflicto | Llamada interna | — |
+| Motor de resolución de conflictos / Aplicador de cambios | Notificador | Pedido de aviso de conflicto o de stock bajo | Llamada interna | — |
+| Aplicador de cambios | Acceso a datos transaccional | Escritura de cambios | Llamada interna | — |
+| Acceso a datos transaccional | Base de datos central | Consultas y escrituras en transacción | Acceso a datos | SQL |
+| Notificador | Servicio de Notificaciones Push | Alertas | Integración externa | HTTPS |
+
+
+## Recorrido de Historias de Usuario sobre las Vistas
+
+Para cada historia de usuario se indica por qué contenedores y componentes pasa cada paso de su criterio de aceptación (Given-When-Then).
+
+| Historia de usuario | Paso del criterio de aceptación | Contenedores | Componentes |
+|---|---|---|---|
+| `HU-02` Registrar un nuevo lote de semillas (offline) | **Given** el jardinero está en el campo sin conexión y abre el formulario de lote | Aplicación móvil | Vistas de stock y bitácora |
+| | **When** completa cantidad y año de cosecha y presiona "Guardar" | Aplicación móvil → Almacén local | Vistas → Modelos de vista de stock y bitácora (validan) → Repositorio local → Cifrado local; el cambio queda como "pendiente_sync" |
+| | **Then** la interfaz confirma el guardado en menos de 1 segundo, sin usar la red | Aplicación móvil | Modelos de vista de stock y bitácora → Vistas |
+| `HU-08.B1` Sincronización diferida de notas de bitácora | **Given** se restableció la conexión y hay 5 notas pendientes en el Almacén local | Aplicación móvil → Almacén local | Gestor de sincronización → Repositorio local (lee pendientes) |
+| | **When** se activa la sincronización en segundo plano: el lote se envía y se encola | Aplicación móvil → API de sincronización → Cola de sincronización | Gestor de sincronización → Cliente de la API → Controladores REST → Autenticación y autorización → Receptor de sincronización → Publicador de lotes. La API responde "202 Aceptado" y la nota pasa a "en_proceso" |
+| | **When** el lote se procesa | Cola de sincronización → Procesador de sincronización → Base de datos central | Consumidor de lotes → Motor de resolución de conflictos → Aplicador de cambios → Acceso a datos transaccional (una transacción) |
+| | **Then** el usuario ve las notas como "sincronizado" | Aplicación móvil → API de sincronización → Base de datos central | Gestor de sincronización → Cliente de la API → Controladores REST → Receptor de sincronización (consulta estado) → Acceso a datos; Repositorio local actualiza el estado |
+| `HU-xx` *(completar con el resto de las HU del SRS que implementan Stock y Bitácora)* | Given / When / Then de su criterio de aceptación | … | … |
 
 
 ## Recorrido de Historias de Usuario sobre las Vistas
