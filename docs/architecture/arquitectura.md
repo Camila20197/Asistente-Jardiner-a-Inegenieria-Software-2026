@@ -92,7 +92,14 @@ Aplica unicamente a la zona de sincronizacion en segundo plano. Se tiene mayor c
 *   Autenticación y Autorización: Tokens JWT sobre HTTPS para validar la identidad en cada sincronización.
 *   Manejo de Transacciones e Integridad: Transacciones locales y remotas (si la sincronización de un lote falla a la mitad, se ejecuta Rollback).
 *   Auditoría y Registro: Campo last_modified y marcado de versión para resolución de conflictos (EC-03).
+*   Gestión de excepciones: el Procesador de sincronización reintenta los lotes que fallan y registra como fallido el que no se puede aplicar, sin perderlo (EC-03).
+*   Notificaciones: alertas push de stock bajo y de conflictos de sincronización, mediante un servicio externo.
+*   Interoperabilidad: API REST con JSON sobre HTTPS.
 
+**Aspectos transversales descartados:**
+
+*   Instrumentación y monitoreo del servidor: descartado para el MVP de uso personal; los lotes fallidos quedan registrados y alcanzan para diagnosticar.
+*   Auditoría completa de acciones por usuario: descartada porque cada usuario gestiona solo sus propios datos; el versionado con last_modified cubre lo que exige EC-03.
 
 ### Tabla de coberturas y sacrificios
 
