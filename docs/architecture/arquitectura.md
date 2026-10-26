@@ -484,7 +484,7 @@ Se demuestra el recorrido de dos Historias de Usuario clave del TP1 a través de
 * Then (Entonces): La API responde 200 OK, la PWA actualiza el estado local a "sincronizado" y el usuario ve reflejado el estado en su pantalla.
 
 
-## Desiciones de arquitectura (ADR/DA)
+## Decisiones de arquitectura (ADR/DA)
 
 **DA-01 — Adopción de Arquitectura Local-First (PWA) para Persistencia Offline**
 * Escenario que la motiva: EC-01 (Disponibilidad / Operación sin red en el campo).
@@ -508,13 +508,13 @@ Se demuestra el recorrido de dos Historias de Usuario clave del TP1 a través de
 * Decisión:
     * Tácticas: Introducir concurrencia y Acotar colas.
     * Estilo: Orientado a Eventos / Procesamiento Asincrónico.
-    * Patrón: Broker (Cola de mensajes con Redis).
+    * Patrón: Broker (Cola de sincronización con Redis, durable). La API publica los lotes y un contenedor separado, el Procesador de sincronización, los consume. En el cliente, el Gestor de sincronización envía los lotes en segundo plano (Service Worker).
 * Alternativas consideradas:
     * Procesamiento Síncrono en el Endpoint HTTP: Descartado porque causa timeouts de red y congela la aplicación móvil.
 * Consecuencias:
     * A favor: La PWA recupera el control de inmediato; la API responde rápido al usuario.
     * En contra: Se suma un contenedor de cola (Redis) a la infraestructura operativa.
-* Elementos afectados: Contenedores API Backend y Cola de Tareas.
+* Elementos afectados: Contenedores API de sincronización, Cola de sincronización y Procesador de sincronización; componente Gestor de sincronización de la Aplicación móvil.
 
 
 **DA-03 — Arquitectura en Capas en el Backend para Mantenibilidad Modular**
@@ -535,8 +535,8 @@ Se demuestra el recorrido de dos Historias de Usuario clave del TP1 a través de
 ## Trazabilidad 
 |Escenario (TP2)| Atributo (ISO)| Tácticas Aplicadas| Estilo / Patrón| Decisión de Arquitectura| Elementos C4 Afectados|
 |---|---|---|---|---|---|
-|EC-01| Fiabilidad (3.1)| Degradación controlada| Local-First / Repository Local| DA-01| Contenedores: Aplicación PWA, Almacén Local.|
-|EC-02| Eficiencia (1.2)| Concurrencia, acotar colas| Orientada a eventos / Broker| DA-02| Contenedores: API Backend, Cola de Tareas|
-|EC-03| Fiabilidad (3.2)| Rollback, versionado| Repositorio / Transacciones| DA-01 / DA-02| Componente: Motor de Resolución de Conflictos.|
-|EC-04| Seguridad (4.1)| Cifrado, transacciones| Capas / Cifrado reposo| DA-01 / DA-03| Componentes: Módulo Auth, Acceso a Datos.|
-|EC-05| Mantenibilidad (5.1)| Encapsular, intermediario| Capas / Hexagonal| DA-03| Componentes: Servicios de Negocio (Stock/Bitácora).|
+|EC-01| Fiabilidad (3.1)| Degradación controlada| Local-First / Repository Local| DA-01| Contenedores: Aplicación móvil, Almacén local. Componente: Repositorio local.|
+|EC-02| Eficiencia (1.2)| Concurrencia, acotar colas| Orientada a eventos / Broker| DA-02| Contenedores: API de sincronización, Cola de sincronización, Procesador de sincronización. Componentes: Gestor de sincronización, Receptor de sincronización, Publicador de lotes, Consumidor de lotes.|
+|EC-03| Fiabilidad (3.2)| Rollback, versionado| Repositorio / Transacciones| DA-01 / DA-02| Componentes del Procesador de sincronización: Motor de resolución de conflictos, Acceso a datos transaccional, Manejo de excepciones.|
+|EC-04| Seguridad (4.1)| Cifrado, transacciones| Capas / Cifrado reposo| DA-01 / DA-03| Componentes: Autenticación y autorización (API), Cifrado local y Cliente de la API (Aplicación móvil), Acceso a datos transaccional (Procesador).|
+|EC-05| Mantenibilidad (5.1)| Encapsular, intermediario| Capas / Hexagonal| DA-03| Componentes de la API: Controladores REST, Servicio de consultas de stock y bitácora, Acceso a datos.|
