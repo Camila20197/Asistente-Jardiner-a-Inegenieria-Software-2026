@@ -82,10 +82,10 @@ Se sacrifican consistencias eventuales, los datos locales del cliente pueden dif
 Aplica unicamente a la zona de sincronizacion en segundo plano. Se tiene mayor complejidad operativa al sumar un contenedor intermediario de cola (Redis). La PWA deposita el paquete de sincronizacion en el broker sin esperar el procesamiento sincrono bloqueante.
 
 
-### Estilos por Contenedor
+### Patrones por Contenedor
 
 * En el contenedor Cliente (Aplicacion movil / PWA): 
-    *   Patron MVVM (Modelo-vista-vista-modelo): Aisla la logica de interaccion de la UI y gestiona el estado reactivo local
+    *   Patron MVVM (Modelo-vista-vista de modelo): Aisla la logica de interaccion de la UI y gestiona el estado reactivo local
     *   Patron repository local: Encapsula las lecturas y escrituras hacia IndexBD/SQLite local.
 
 * En el Contenedor Servidor (API de Backend):
@@ -168,6 +168,7 @@ C4Container
 * Cliente-servidor: la Aplicación móvil siempre inicia la comunicación; no hay flechas desde la API ni desde la Base de datos central hacia el cliente; el cliente no accede a la Base de datos central (solo a su Almacén local). El aviso al usuario sale por el Servicio de Notificaciones Push, que es la excepción permitida (notificaciones).
 * Orientada a eventos (zona de sincronización): la API (productor) y el Procesador de sincronización (consumidor) no se llaman entre sí; los dos se conectan solo a la Cola de sincronización. La API no espera el procesamiento: responde "202 Aceptado" apenas encola. Si un lote no se procesa, se reintenta (ver aspectos transversales).
 * La cola es durable (persistencia en disco) porque EC-03 exige 0% de pérdida: un lote recibido no puede perderse si Redis se reinicia.
+
 ### Catalogo de la Vista de Contenedores
 
 #### Catalogo de contenedores
@@ -195,7 +196,11 @@ C4Container
 | API de sincronización | Servicio Meteorológico | Consulta de pronóstico (futuro, caja negra) | Integración externa | JSON sobre HTTPS |
 
 ## Vista de Componentes
-Se realiza un zoom sobre el contenedor princial de logica se servidor: API Backend de Sincronizacion
+Se realiza un zoom sobre el contenedor princial de logica se servidor: Aplicación móvil
+
+Patrón principal: MVVM (Modelo – Vista – Modelo de Vista) para la interfaz de usuario y Repository para el acceso al almacén local.   
+Aspectos transversales: Cifrado de datos en reposo y cliente de autenticación (JWT sobre HTTPS).   
+Las operaciones de lectura y escritura ocurren $100\%$ sobre la base de datos local del dispositivo (IndexedDB) a través del Repositorio Local, lo que garantiza el funcionamiento en campo sin conexión a internet (EC-01, DA-01). Las escrituras no viajan inmediatamente al servidor: quedan marcadas como pendiente_sync y es el Gestor de Sincronización en segundo plano el encargado de paquetizarlas y enviarlas a la API cuando detecta red (EC-02, DA-02).   
 
 ```mermaid
 %%{init: {"wrap": true}}%%
@@ -243,17 +248,6 @@ C4Component
     UpdateElementStyle(clienteApi, $bgColor="#1F5FAD", $borderColor="#174A87")
     UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
-
-### Catalogo de la Vista de Componentes
-|Componente| Tecnología| Responsabilidad| 
-|---|---|---|
-|Controladores REST| FastAPI Routers| Expone los endpoints HTTPS, procesa el cuerpo JSON de las solicitudes y retorna respuestas.|
-|Módulo de Autenticación| JWT / Security Middleware| Valida la identidad del usuario y protege las rutas de la API.|
-|Servicio de Gestión de Stock| Python| Ejecuta la lógica del módulo de Stock (RF01–RF04): alertas de stock crítico y bajas.|
-|Servicio de Bitácora| Python| Administra el historial de notas de campo (RF05–RF06) y el versionado de entradas.|
-|Motor de Resolución de Conflictos| Python| Detecta colisiones de fechas/versiones entre el cliente y el servidor (EC-03).|
-|Capa de Acceso a Datos| SQLAlchemy ORM| Encapsula el acceso a la Base de Datos Central con soporte de transacciones atómicas.|
-|Publicador de Eventos| Redis Client| Envía mensajes asincrónicos hacia la Cola de Tareas cuando se requieren procesamientos diferidos.|
 
 #### Catálogo de componentes de la Aplicación móvil
 
@@ -446,20 +440,67 @@ C4Component
 | Notificador | Servicio de Notificaciones Push | Alertas | Integración externa | HTTPS |
 
 
-## Recorrido de Historias de Usuario sobre las Vistas
+## Vista de despliegue 
+## Vista de Despliegue
 
-Para cada historia de usuario se indica por qué contenedores y componentes pasa cada paso de su criterio de aceptación (Given-When-Then).
+La vista de despliegue describe la topología de infraestructura del entorno de producción real en el que opera el Asistente de Huerta. Muestra cómo los contenedores definidos en la vista de contenedores se distribuyen en nodos de ejecución físicos y virtuales.
 
-| Historia de usuario | Paso del criterio de aceptación | Contenedores | Componentes |
-|---|---|---|---|
-| `HU-02` Registrar un nuevo lote de semillas (offline) | **Given** el jardinero está en el campo sin conexión y abre el formulario de lote | Aplicación móvil | Vistas de stock y bitácora |
-| | **When** completa cantidad y año de cosecha y presiona "Guardar" | Aplicación móvil → Almacén local | Vistas → Modelos de vista de stock y bitácora (validan) → Repositorio local → Cifrado local; el cambio queda como "pendiente_sync" |
-| | **Then** la interfaz confirma el guardado en menos de 1 segundo, sin usar la red | Aplicación móvil | Modelos de vista de stock y bitácora → Vistas |
-| `HU-08.B1` Sincronización diferida de notas de bitácora | **Given** se restableció la conexión y hay 5 notas pendientes en el Almacén local | Aplicación móvil → Almacén local | Gestor de sincronización → Repositorio local (lee pendientes) |
-| | **When** se activa la sincronización en segundo plano: el lote se envía y se encola | Aplicación móvil → API de sincronización → Cola de sincronización | Gestor de sincronización → Cliente de la API → Controladores REST → Autenticación y autorización → Receptor de sincronización → Publicador de lotes. La API responde "202 Aceptado" y la nota pasa a "en_proceso" |
-| | **When** el lote se procesa | Cola de sincronización → Procesador de sincronización → Base de datos central | Consumidor de lotes → Motor de resolución de conflictos → Aplicador de cambios → Acceso a datos transaccional (una transacción) |
-| | **Then** el usuario ve las notas como "sincronizado" | Aplicación móvil → API de sincronización → Base de datos central | Gestor de sincronización → Cliente de la API → Controladores REST → Receptor de sincronización (consulta estado) → Acceso a datos; Repositorio local actualiza el estado |
-| `HU-xx` *(completar con el resto de las HU del SRS que implementan Stock y Bitácora)* | Given / When / Then de su criterio de aceptación | … | … |
+### Justificación de la Topología de Infraestructura
+- **Nodo Cliente (Dispositivo Móvil):** Aísla la ejecución de la PWA y su almacenamiento local (`IndexedDB`) en el hardware del usuario. Garantiza la operación offline en campo (**EC-01**) y el cifrado de datos en reposo (**EC-04**).
+- **Nodo Servidor Central (Servidor VPS / Docker Host):** Para evitar sobrecostos y complejidad operativa innecesaria para un proyecto de uso personal desarrollado por un equipo reducido, los componentes del servidor ejecutan desacoplados mediante contenedores **Docker** en un único servidor VPS Linux (2 vCPU, 4 GB RAM).
+- **Aislamiento de Red:** La comunicación entre el nodo cliente y el servidor se realiza exclusivamente a través de la red pública mediante conexiones cifradas **HTTPS/TLS (Puerto 443)**. Dentro del servidor, la base de datos PostgreSQL y Redis no están expuestas a la red pública; solo se comunican internamente a través de la red privada de Docker.
+
+---
+
+### Diagrama de Despliegue (Mermaid C4Deployment)
+
+```mermaid
+C4Deployment
+    title Diagrama de Despliegue - Entorno de Producción (Asistente de Huerta)
+
+    Deployment_Node(movil, "Dispositivo Móvil del Usuario", "Smartphone Android / iOS") {
+        Deployment_Node(navegador, "Navegador Web / PWA Engine", "WebView / Chromium / Safari") {
+            Container(app, "Aplicación móvil", "PWA / React", "Interfaz de usuario y lógica cliente offline.")
+            ContainerDb(dbLocal, "Almacén local", "IndexedDB", "Almacenamiento cifrado en el dispositivo.")
+        }
+    }
+
+    Deployment_Node(vps, "Servidor Cloud VPS", "Linux Ubuntu 24.04 LTS (2 vCPU, 4 GB RAM)") {
+        Deployment_Node(docker, "Motor de Contenedores", "Docker Engine / Docker Compose") {
+            Container(api, "API de sincronización", "Python 3.11 / FastAPI", "Atiende peticiones REST y encola lotes.")
+            ContainerQueue(colaSync, "Cola de sincronización", "Redis 7 (Persistencia AOF)", "Broker de mensajes en disco.")
+            Container(procesador, "Procesador de sincronización", "Python 3.11 / RQ Worker", "Procesa lotes en segundo plano.")
+            ContainerDb(dbCentral, "Base de datos central", "PostgreSQL 16", "Persistencia relacional de datos consolidados.")
+        }
+    }
+
+    Rel(app, dbLocal, "Lee y escribe datos locales", "IndexedDB API")
+    Rel(app, api, "Sincroniza lotes de cambios y descarga datos", "HTTPS / JSON (Puerto 443)")
+    Rel(api, dbCentral, "Lee datos y registra estado de lotes", "SQL (Red interna Docker)")
+    Rel(api, colaSync, "Publica lotes de cambios", "Redis Protocol (Red interna Docker)")
+    Rel(procesador, colaSync, "Consume lotes de cambios", "Redis Protocol (Red interna Docker)")
+    Rel(procesador, dbCentral, "Aplica cambios y resuelve conflictos", "SQL (Red interna Docker)")
+```
+
+### Catálogo de Nodos de Despliegue
+| Nodo | Tipo / Tecnología| Capacidad / Especificación| Contenedores que aloja| Responsabilidad| 
+|---|---|---|---|---|
+|Dispositivo Móvil del Usuario| Smartphone (Android / iOS)| Hardware móvil de gama media/baja| N/A (Hosting del entorno de ejecución)| Dispositivo físico donde opera el jardinero en campo.|
+|Navegador Web / PWA Engine| Entorno de ejecución (Chromium / Safari)| Recursos asignados por el SO móvil • Aplicación móvil • Almacén local| Proporciona el entorno seguro para ejecutar la PWA y la base de datos local IndexedDB.|
+|Servidor Cloud VPS| Servidor Virtual en la Nube (Linux Ubuntu)| 2 vCPU, 4 GB RAM, 40 GB SSD| N/A (Hosting del motor de contenedores)| Servidor remoto que aloja la infraestructura de backend del sistema.|
+|Motor de Contenedores| Docker Engine / Docker Compose| Aislamiento por contenedores Linux • API de sincronización • Cola de sincronización • Procesador de sincronización • Base de datos central| Orquesta y aisla la ejecución de los componentes del servidor.|
+
+
+### Catálogo de Relaciones de Despliegue
+| Origen (Nodo/Contenedor)| Destino (Nodo/Contenedor)| Qué se comunica| Tipo| Protocolo / Puerto| 
+|---|---|---|---|---|
+|Aplicación móvil| Almacén local| Lectura y escritura de datos y borradores offline| Llamada interna| IndexedDB API|
+|Aplicación móvil| API de sincronización| Envío de lotes de cambios y descarga de datos| Red Pública Cifrada| HTTPS / JSON (Puerto 443)| 
+|API de sincronización| Base de datos central| Lectura de catálogo y registro de estado de lotes| Red Interna Docker| SQL (Puerto 5432)|
+|API de sincronización| Cola de sincronización| Publicación de lotes recibidos| Red Interna Docker| Redis Protocol (Puerto 6379)| 
+|Procesador de sincronización| Cola de sincronización| Consumo y confirmación de procesamiento de lotes| Red Interna Docker| Redis Protocol (Puerto 6379)|
+|Procesador de sincronización| Base de datos central| Aplicación de cambios y resolución de conflictos en transacción| Red Interna Docker| SQL (Puerto 5432)|
+
 
 
 ## Recorrido de Historias de Usuario sobre las Vistas
@@ -529,6 +570,18 @@ Se demuestra el recorrido de dos Historias de Usuario clave del TP1 a través de
     * A favor: Permite agregar el módulo de Clima o Calendario agregando nuevos servicios/adaptadores sin modificar el código de Stock.
     * En contra: Agrega clases/interfaces intermedias (indirección).
 * Elementos afectados: Componentes internos de la API Backend
+
+**DA-04 — Despliegue Centralizado del Backend en Motor de Contenedores (Docker) sobre VPS Unificado**
+* Escenario que la motiva: Restricción de recursos del proyecto, tamaño del equipo y presupuesto operativo, en equilibrio con EC-04 (Aislamiento de red) y EC-02 (Desempeño).
+* Contexto: Al ser una herramienta de uso personal, la carga concurrente de peticiones sobre el servidor es muy baja. Sin embargo, se requiere aislar los componentes backend y garantizar que la base de datos no esté expuesta a la red pública.
+* Decisión:
+    * Desplegar la PWA en el dispositivo del usuario.
+    * Desplegar el backend unificado en un único VPS utilizando Docker Compose. La API expone únicamente el puerto 443 (HTTPS) a internet. La base de datos PostgreSQL y la cola Redis se comunican exclusivamente por la red virtual privada de Docker sin exponer sus puertos al exterior.
+* Alternativas consideradas:
+    * Infraestructura Multi-nodo / K8s (Kubernetes) con base de datos administrada: Descartada por sobrecostos excesivos y alta complejidad operativa que sobrepasa el alcance del equipo.
+* Consecuencias:
+    * A favor: Mínima complejidad de mantenimiento, despliegue simple mediante docker compose up -d, aislamiento de red para seguridad (EC-04).
+    * En contra (Sacrificio asumido): El servidor VPS es un punto único de falla (Single Point of Failure). Sin embargo, esto es un sacrificio asumido razonable para el MVP de uso personal, ya que la PWA en el celular sigue funcionando offline aun si el servidor VPS se reinicia.
 
 
 
