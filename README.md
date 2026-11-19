@@ -15,6 +15,8 @@ El **Asistente de Jardinería** es una aplicación orientada al uso móvil, pens
 * [Escenarios de atributo de calidad](docs/requirements/quality-scenarios/quality-scenarios.md) (TP2, Parte A).
 * [Perfil de usuario, escenario de uso y flujo de navegación](docs/ui/user-profiles/usuario.md) (TP2, Parte B).
 * [Maquetados HTML](docs/ui/mockups/) y [evaluaciones heurísticas por pantalla](docs/ui/heuristic-review/) (TP2, Parte B).
+* [Arquitectura del sistema](docs/architecture/arquitectura.md) (TP3).
+* [Diseño detallado de la HU-08](docs/design/diseno-detallado.md) (TP4): diseño, implementación, pruebas y cobertura.
 * [Registro de uso de IA](docs/uso-ia.md).
 
 ### Ciclo de vida del software
@@ -83,4 +85,11 @@ python -m pytest
 ```bash
 python -m pytest --cov=src --cov-branch --cov-report=term-missing
 radon cc -s src/dominio src/aplicacion src/infraestructura src/interfaz
+```
+
+**Diagrama de clases desde el código:**
+
+```bash
+cd src
+pyreverse -o mmd -f ALL -p HU08 dominio aplicacion infraestructura interfaz
 ```
