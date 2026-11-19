@@ -1,0 +1,2 @@
+flask>=3.0          # la interfaz gráfica mínima (la página le habla a PantallaBitacora)
+cryptography>=42    # AES-256-GCM del Cifrado local (EC-04)
