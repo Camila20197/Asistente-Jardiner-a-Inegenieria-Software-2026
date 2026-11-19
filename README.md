@@ -71,3 +71,16 @@ y abrir <http://127.0.0.1:8000> en el navegador. La sesión de la cuenta precarg
 | `python src/main.py --puerto 8080` | Usa otro puerto |
 
 Los datos quedan en `datos/` (el archivo `almacen_local.db`, cifrado, y `sal.bin`). La demostración funciona con el Wi-Fi apagado: todo corre en la computadora.
+
+**Ejecutar las pruebas** (con la red cortada y el reloj fijo; no hace falta tener la interfaz abierta):
+
+```bash
+python -m pytest
+```
+
+**Cobertura y complejidad:**
+
+```bash
+python -m pytest --cov=src --cov-branch --cov-report=term-missing
+radon cc -s src/dominio src/aplicacion src/infraestructura src/interfaz
+```
