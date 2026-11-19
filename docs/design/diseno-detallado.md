@@ -88,12 +88,14 @@ La bitácora de campo es la herramienta diaria del jardinero para registrar las 
 | Escrituras marcadas `pendiente_sync` | Toda entrada nace `pendiente_sync` (valor inicial en la entidad). Pasarla a `sincronizada` es del Gestor de sincronización, fuera de esta HU. |
 | Dependencias en un solo sentido | Interfaz → aplicación → dominio. La infraestructura implementa las interfaces de la aplicación. El dominio no importa nada de las otras capas. |
 
-### 2.4 Cambios al modelo de dominio del TP1
+### 2.4 Cambios a la arquitectura del TP3 y al modelo de dominio del TP1
 
-Al bajar al diseño apareció una diferencia con el modelo de dominio del TP1. Se documenta acá y se actualizó el SRS:
+Al bajar al diseño aparecieron tres diferencias. Se documentan acá y se actualizaron los documentos anteriores:
 
 | Dónde | Qué decía | Qué se cambió y por qué |
 |---|---|---|
+| Catálogo de relaciones de la Aplicación móvil (`docs/architecture/arquitectura.md`) | Modelos de vista → Repositorio local: «Lectura y guardado de lotes y notas» | Se agregó «y lectura del catálogo de especies», también en la etiqueta del diagrama de componentes. La HU le pide al Repositorio local la especie elegida (CU02, paso 3) y ese mensaje no estaba en el catálogo. |
+| Catálogo de componentes de la Aplicación móvil | Modelos de vista: «Validar lotes y notas…» | Se aclaró que las reglas de lotes y notas viven en las entidades del dominio, dentro de este mismo componente (el modelo de MVVM), y que el modelo de vista coordina y arma el estado. No hizo falta un componente nuevo. |
 | Modelo de dominio del TP1 (`docs/requirements/srs.md`) | `EntradaBitacora` con `id: int`, `fecha` y `nota` | Se agregaron `estadoSync` (enumeración `EstadoSync`), `version` y `lastModified`, y el `id` pasó a texto (UUID). Son los atributos de la tabla de entidades del grupo (3.2): sin ellos no se puede marcar lo pendiente (EC-01), y sin red no hay servidor que numere, así que el id se genera en el teléfono. |
 
 En el diseño, los atributos llevan los nombres de la tabla de entidades del grupo, en minúsculas con guion bajo (`estado_sync`, `last_modified`); el SRS conserva su convención (`estadoSync`, `lastModified`).
@@ -270,3 +272,126 @@ Las dos entidades salen de la tabla de 3.2. Se cumplen las reglas de conexión d
 | RepositorioEspecies | Controller (técnico) | Repositorio local | Acceso a datos |
 | RepositorioBitacora | Controller (técnico) | Repositorio local | Acceso a datos |
 | ServicioCifrado | Controller (técnico) | Cifrado local | Transversal |
+
+### 3.5 Diagramas de secuencia
+
+Se dibujan dos secuencias con los participantes de la robustez: la **A**, elegir la especie y ver su línea de tiempo; y la **B**, registrar una observación, con los dos rechazos en fragmentos `alt`. CA-01 termina en la A: después de guardar, la pantalla vuelve a pedir la línea de tiempo y la entrada aparece primera.
+
+**Secuencia A: elegir la especie y ver su línea de tiempo**
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor J as Jardinero/a
+    participant P as PantallaBitacora
+    participant C as ControladorBitacora
+    participant RE as RepositorioEspecies
+    participant RB as RepositorioBitacora
+    participant SC as ServicioCifrado
+    J->>P: abre la bitácora: elegir_especie()
+    P->>C: especies()
+    C->>RE: todas()
+    RE-->>C: especies del catálogo local
+    C-->>P: especies, por nombre
+    J->>P: toca una especie: mostrar_linea_de_tiempo(especie_id)
+    P->>C: linea_de_tiempo(especie_id)
+    C->>RE: especie(especie_id)
+    alt la especie no está en el catálogo
+        RE-->>C: None
+        C-->>P: None
+        P-->>J: «La especie no existe en el catálogo.» (404)
+    else la especie existe
+        RE-->>C: especie
+        C->>RB: entradas_de(especie_id, usuario_id)
+        loop por cada entrada propia guardada
+            RB->>SC: descifrar(datos_cifrados)
+            SC-->>RB: fecha y nota
+        end
+        Note right of SC: con otra clave, descifrar lanza DatosIlegibles (EC-04)
+        RB-->>C: entradas
+        C->>C: ordena por fecha y momento de guardado, la más reciente primero
+        C-->>P: EstadoBitacora(especie, entradas, hoy)
+        P-->>J: la línea de tiempo (⏳ Sin sincronizar / ✓ Sincronizada) y el formulario con la fecha de hoy
+    end
+```
+
+**Cómo se lee la secuencia A.**
+
+1. Al abrir la bitácora, la pantalla pide las especies al controlador y este al `RepositorioEspecies`. La persona elige una (CU02, pasos 2 y 3).
+2. La pantalla pide la línea de tiempo. El controlador busca la especie; si no está, responde `None` y la pantalla muestra el motivo.
+3. Si está, el controlador le pide al `RepositorioBitacora` las entradas de esa especie **y de esa persona** (RF05). El repositorio las lee del Almacén local y le pide al `ServicioCifrado` que descifre cada una. Si la clave no corresponde, `descifrar` lanza `DatosIlegibles`: eso es EC-04.
+4. El controlador ordena las entradas y devuelve el estado de la vista, con la fecha de hoy para sugerirla en el formulario (decisión 1 del TP2). La pantalla lo muestra, con la píldora del estado de sincronización de cada entrada.
+
+**Secuencia B: registrar una observación (éxito y rechazos)**
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor J as Jardinero/a
+    participant P as PantallaBitacora
+    participant C as ControladorBitacora
+    participant RE as RepositorioEspecies
+    participant E as EntradaBitacora
+    participant RB as RepositorioBitacora
+    participant SC as ServicioCifrado
+    J->>P: escribe fecha y nota y toca «Guardar entrada»: guardar(especie_id)
+    P->>C: registrar_entrada(especie_id, fecha_texto, nota)
+    C->>RE: especie(especie_id)
+    alt la especie no está en el catálogo (CU02-A1)
+        RE-->>C: None
+        C-->>P: Respuesta(aceptada=False, motivo)
+        P-->>J: muestra el motivo (422)
+    else la especie existe
+        RE-->>C: especie
+        C->>E: registrar(especie, usuario_id, fecha_texto, nota, hoy, ahora)
+        alt fecha o nota inválidas (CA-02)
+            E--xC: EntradaInvalida(motivo)
+            C-->>P: Respuesta(aceptada=False, motivo)
+            P-->>J: muestra el motivo y conserva lo escrito (422)
+        else fecha y nota válidas (CA-01)
+            E-->>C: entrada con estado_sync = pendiente_sync
+            C->>RB: guardar(entrada)
+            RB->>SC: cifrar(fecha y nota)
+            SC-->>RB: datos_cifrados (AES-256-GCM)
+            Note over RB: escribe en el Almacén local, sin usar la red (EC-01)
+            RB-->>C: guardada
+            C-->>P: Respuesta(aceptada=True, entrada)
+            P-->>J: «Entrada guardada en tu teléfono», ⏳ Sin sincronizar
+        end
+    end
+```
+
+**Cómo se lee la secuencia B.**
+
+1. La pantalla no valida nada: le pasa al controlador la especie elegida, la fecha como la mandó el selector y la nota.
+2. El controlador busca la especie. Si no está en el catálogo (CU02-A1), responde un rechazo con el motivo y no se crea nada.
+3. Con la especie en la mano, el controlador le pide a `EntradaBitacora` que se cree con `registrar(...)`, y le pasa el usuario de la sesión, el día de hoy y el momento actual. La entidad aplica las reglas R1 a R3: si algo no se cumple, lanza `EntradaInvalida` con el motivo, el controlador lo convierte en una `Respuesta` rechazada y la pantalla lo muestra sin borrar lo escrito (CA-02). No se guardó nada.
+4. Si las reglas se cumplen, la entrada nace `pendiente_sync` (R5) y el controlador se la da al `RepositorioBitacora`. **Las dos tácticas se ven acá:** el repositorio le pide al `ServicioCifrado` que cifre la fecha y la nota (EC-04) y escribe en el Almacén local, sin ningún mensaje hacia la red (EC-01).
+5. El controlador responde `aceptada` y la pantalla avisa que quedó guardada en el teléfono, sin sincronizar. Después vuelve a pedir la línea de tiempo (secuencia A) y la entrada aparece primera: eso cierra CA-01.
+
+Las dos decisiones (la especie y las reglas de la entrada) ocurren antes de guardar, así que un rechazo no deja nada a medias.
+
+**Cada mensaje entre componentes está en el catálogo del TP3.**
+
+| Mensajes | De → a | Componentes | Relación del catálogo del TP3 |
+|---|---|---|---|
+| `elegir_especie()`, `mostrar_linea_de_tiempo()`, `guardar()` | Jardinero/a → PantallaBitacora | Persona → Vistas | Uso de la interfaz |
+| `especies()`, `linea_de_tiempo()`, `registrar_entrada()` | PantallaBitacora → ControladorBitacora | Vistas → Modelos de vista | Enlace de datos y acciones del usuario |
+| `registrar(...)` | ControladorBitacora → EntradaBitacora | Dentro de Modelos de vista | No hace falta: mismo componente |
+| `todas()`, `especie(especie_id)` | ControladorBitacora → RepositorioEspecies | Modelos de vista → Repositorio local | Lectura y guardado de lotes y notas, **y lectura del catálogo de especies** (agregado, ver 2.4) |
+| `guardar(entrada)`, `entradas_de(especie_id, usuario_id)` | ControladorBitacora → RepositorioBitacora | Modelos de vista → Repositorio local | Lectura y guardado de lotes y notas |
+| `cifrar(...)`, `descifrar(...)` | RepositorioBitacora → ServicioCifrado | Repositorio local → Cifrado local | Cifrado y descifrado de datos sensibles |
+| Escribe y lee (la nota de la secuencia B) | Repositorios → Almacén local | Repositorio local → Almacén local | Lectura y escritura (IndexedDB API; en el prototipo, SQLite) |
+
+**Asignación de responsabilidades.**
+
+| Responsabilidad | Quién | Criterio GRASP |
+|---|---|---|
+| Decidir si la fecha y la nota son válidas | `EntradaBitacora` (`registrar` y su invariante) | Experto en información: la entrada conoce su fecha y su nota |
+| Crear la entrada | `ControladorBitacora`, con el constructor con nombre `EntradaBitacora.registrar` | Creador: el controlador tiene los datos para iniciarla (la especie elegida, el usuario de la sesión y el reloj); la construcción con reglas la hace la entidad |
+| Nacer pendiente de sincronizar, con versión 1 y su momento de modificación | `EntradaBitacora` | Experto en información |
+| Coordinar el registro y la consulta | `ControladorBitacora` | Controlador: recibe el evento de la pantalla y coordina, sin hacer el trabajo del dominio |
+| Ordenar la línea de tiempo y exponer la fecha de hoy | `ControladorBitacora` | Alta cohesión: preparar el estado de la vista es lo que hace un modelo de vista |
+| Buscar la especie; guardar y leer entradas; filtrar por persona | `RepositorioEspecies`, `RepositorioBitacora` | Alta cohesión y bajo acoplamiento: el controlador no sabe dónde ni cómo se guarda |
+| Cifrar y descifrar | `ServicioCifrado`, a pedido del repositorio | Alta cohesión: hace una sola cosa. Bajo acoplamiento: ni el dominio ni el controlador saben del cifrado |
+| Traducir los pedidos y mostrar las respuestas | `PantallaBitacora` | Bajo acoplamiento: conoce solo al controlador |
