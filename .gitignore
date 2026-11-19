@@ -1,0 +1,37 @@
+# Datos que genera la demostración (el Almacén local y la sal del cifrado): solo la carpeta de la raíz
+/datos/
+
+# Credenciales y configuración local: nunca se suben
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credenciales*
+
+# Bases de datos locales sueltas (por si alguien corre la demo con otra carpeta)
+*.db
+*.sqlite
+*.sqlite3
+sal.bin
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Pruebas y cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editores y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

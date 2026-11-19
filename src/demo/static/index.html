@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bitácora sin señal — Asistente de Huerta</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M6 26C6 13 15 6 27 5c0 12-7 21-20 21z' fill='%231B4D3E'/%3E%3Cpath d='M7 25c5-6 9-10 15-14' stroke='%23F5F7F2' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preload" href="/static/fonts/recursive.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/estilo.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<header class="cabecera">
+  <p class="marca">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26C6 13 15 6 27 5c0 12-7 21-20 21z"/><path class="nervio" d="M7 25c5-6 9-10 15-14"/></svg>
+    Asistente de Huerta
+  </p>
+  <div class="titular">
+    <h1>Una observación, sin señal</h1>
+    <p>Escribila en el teléfono y guardala. Queda en el teléfono, cifrada, aunque no haya red.</p>
+  </div>
+  <div class="medidas" aria-label="Medidas de los escenarios de calidad">
+    <section class="medida" aria-live="polite">
+      <h2>EC-01: sin señal</h2>
+      <p class="valor" id="medida-tiempo">—</p>
+      <p class="pie" id="medida-pie">Guardá una observación para medir cuánto tarda. Medida: el 100%, en menos de 1&nbsp;s.</p>
+    </section>
+    <section class="medida cifra">
+      <h2>EC-04: en reposo</h2>
+      <p class="valor">AES-256-GCM</p>
+      <p class="pie">Fecha y nota cifradas con una clave que sale de la contraseña. Sin ella, no se leen.</p>
+    </section>
+  </div>
+</header>
+
+<main class="escenario">
+  <section class="zona-telefono" aria-label="Teléfono de la jardinera">
+    <div class="telefono">
+      <div class="isla" aria-hidden="true"></div>
+      <div class="pantalla">
+        <div class="barra-estado">
+          <span id="reloj">--:--</span>
+          <span class="senal">
+            <svg viewBox="0 0 22 14" aria-hidden="true"><rect x="0" y="9" width="4" height="5" rx="1"/><rect x="6" y="6" width="4" height="8" rx="1"/><rect x="12" y="3" width="4" height="11" rx="1"/><rect x="18" y="0" width="4" height="14" rx="1"/></svg>
+            Sin señal
+          </span>
+        </div>
+        <div class="app">
+          <div class="app-cabecera">
+            <div>
+              <p class="app-titulo">Bitácora</p>
+              <p class="app-especie" id="app-especie">…</p>
+            </div>
+            <span class="nube" id="nube" aria-live="polite"></span>
+          </div>
+          <nav class="especies" id="especies" aria-label="Elegí la especie"></nav>
+          <div class="app-cuerpo" id="app-cuerpo">
+            <form class="redactor" id="redactor" novalidate>
+              <p class="redactor-titulo">Nueva observación</p>
+              <div class="error" id="error" role="alert" hidden></div>
+              <label for="fecha">Fecha</label>
+              <input type="date" id="fecha" name="fecha">
+              <label for="nota">Notas de campo</label>
+              <textarea id="nota" name="nota" rows="3" placeholder="ej: germinación, riego, presencia de plagas, trasplante"></textarea>
+              <button type="submit" class="guardar" id="guardar">Guardar entrada</button>
+            </form>
+            <p class="ayuda-sync" id="ayuda-sync" hidden><strong>⏳ Sin sincronizar</strong> quiere decir que la entrada ya está guardada en tu teléfono. Se sube sola cuando vuelvas a tener conexión; no tenés que hacer nada.</p>
+            <ol class="linea" id="linea" aria-label="Línea de tiempo"></ol>
+          </div>
+          <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="zona-mapa" aria-labelledby="titulo-mapa">
+    <div class="hoja">
+      <div class="hoja-encabezado">
+        <div>
+          <h2 id="titulo-mapa">El mismo recorrido, en cámara lenta</h2>
+          <p class="bajada">Sobre el diagrama de robustez de la HU-08 y los componentes del TP3.</p>
+        </div>
+        <ul class="leyenda">
+          <li><span class="muestra tierra"></span>La observación</li>
+          <li><span class="muestra hecho"></span>Cumple</li>
+          <li><span class="muestra cifra"></span>Cifrada</li>
+          <li><span class="muestra helada"></span>Rechazada</li>
+        </ul>
+      </div>
+      <div class="marco-mapa">
+      <svg class="mapa" id="mapa" viewBox="0 0 1000 520" role="img" aria-label="Diagrama de robustez: Jardinero/a, PantallaBitacora, ControladorBitacora, RepositorioEspecies, Especie, EntradaBitacora, RepositorioBitacora, ServicioCifrado y Almacén local"></svg>
+      </div>
+      <p class="nota-mapa" id="nota-mapa"></p>
+    </div>
+  </section>
+
+  <section class="zona-registros" aria-label="Qué pasó y cómo quedó guardado">
+    <article class="libreta">
+      <h2>Recorrido paso a paso</h2>
+      <ol class="traza" id="traza"><li class="vacia">Guardá una observación en el teléfono y acá vas a ver cada paso.</li></ol>
+    </article>
+    <article class="libreta archivo">
+      <div class="archivo-encabezado">
+        <h2>El archivo del teléfono</h2>
+        <code id="ruta-archivo"></code>
+      </div>
+      <p class="archivo-bajada">Así queda en el disco, sin la contraseña: lo que vería quien se lleve el teléfono.</p>
+      <ul class="filas" id="filas"></ul>
+      <form class="abrir" id="abrir" autocomplete="off">
+        <label for="contrasena">Abrir el archivo con una contraseña</label>
+        <div class="abrir-fila">
+          <input id="contrasena" type="text" placeholder="probá con cualquiera" spellcheck="false">
+          <button type="submit">Abrir</button>
+        </div>
+        <p class="resultado" id="resultado" aria-live="polite"></p>
+      </form>
+    </article>
+  </section>
+</main>
+</body>
+</html>
