@@ -41,3 +41,33 @@ Se seleccionó un **ciclo de vida iterativo e incremental**, porque los requerim
 2. Usuario
 
 El detalle de cada rol está en la sección 1.3 del [SRS](docs/requirements/srs.md).
+
+### Prototipo de la HU-08 (TP4)
+
+Implementa la HU-08, *Registrar una observación en la bitácora*, sin conexión: la entrada se valida, se guarda cifrada en el teléfono y queda pendiente de sincronizar. El diseño está en [`docs/design/diseno-detallado.md`](docs/design/diseno-detallado.md).
+
+**Requisitos:** Python 3.11 o más nuevo (se probó con 3.11 y 3.13). No hace falta crear la base de datos: el programa la crea la primera vez.
+
+**Instalar** (desde la carpeta del repositorio):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # en Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**Ejecutar la interfaz:**
+
+```bash
+python src/main.py
+```
+
+y abrir <http://127.0.0.1:8000> en el navegador. La sesión de la cuenta precargada «usuario» está simulada; la contraseña de la demostración es `huerta2026` (con ella se abre el archivo cifrado del teléfono desde la página).
+
+| Opción | Qué hace |
+|---|---|
+| `python src/main.py --limpio` | Borra la carpeta `datos/` y empieza de cero, con el catálogo y dos observaciones de ejemplo |
+| `python src/main.py --memoria` | Usa el repositorio en memoria en lugar de SQLite: no queda nada guardado en el disco |
+| `python src/main.py --puerto 8080` | Usa otro puerto |
+
+Los datos quedan en `datos/` (el archivo `almacen_local.db`, cifrado, y `sal.bin`). La demostración funciona con el Wi-Fi apagado: todo corre en la computadora.
