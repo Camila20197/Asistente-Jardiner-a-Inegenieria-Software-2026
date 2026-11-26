@@ -1,6 +1,0 @@
-flask>=3.0          # la interfaz gráfica mínima (la página le habla a PantallaBitacora)
-cryptography>=42    # AES-256-GCM del Cifrado local (EC-04)
-pytest>=8           # pruebas unitarias
-pytest-cov>=5       # cobertura de sentencias y ramas
-radon>=6            # complejidad ciclomática
-pylint>=3           # trae pyreverse, para el diagrama de clases

@@ -238,7 +238,7 @@ C4Component
 
     Rel(jardinero, vistas, "Usa", "HTTPS")
     Rel(vistas, modelosVista, "Enlaza datos y acciones")
-    Rel(modelosVista, repoLocal, "Lee y guarda lotes y notas; lee el catálogo")
+    Rel(modelosVista, repoLocal, "Lee y guarda lotes y notas")
     Rel(repoLocal, cifrado, "Cifra y descifra")
     Rel(repoLocal, dbLocal, "Lee y escribe", "IndexedDB")
     Rel(gestorSync, repoLocal, "Lee pendientes y actualiza estado")
@@ -267,7 +267,7 @@ C4Component
 | Componente | Tecnología | Responsabilidad | Origen (trazabilidad) |
 |---|---|---|---|
 | Vistas de stock y bitácora | Componentes React | Mostrar formularios, listados y alertas; capturar las acciones del usuario. | RF01–RF06 |
-| Modelos de vista de stock y bitácora | Estado React | Validar lotes y notas, calcular la alerta de stock bajo, ordenar las notas y exponer el estado a las Vistas. Las reglas de un lote o una nota válidos viven en las entidades del dominio (por ejemplo, `EntradaBitacora`), que forman parte de este componente como el «modelo» de MVVM; el modelo de vista coordina (aclaración del TP4). | RF01–RF06 |
+| Modelos de vista de stock y bitácora | Estado React | Validar lotes y notas, calcular la alerta de stock bajo, ordenar las notas y exponer el estado a las Vistas. | RF01–RF06 |
 | Repositorio local | JavaScript | Encapsular el acceso al Almacén local y marcar cada cambio como "pendiente_sync". | DA-01 (EC-01) |
 | Cifrado local | Web Crypto API (AES) | Aspecto transversal: cifrar los datos sensibles en reposo. | EC-04 |
 | Gestor de sincronización | Service Worker / Background Sync | Enviar los cambios pendientes en lotes acotados, en segundo plano, y reintentar si falla la red. | DA-02 (EC-02) |
@@ -279,7 +279,7 @@ C4Component
 |---|---|---|---|---|
 | Jardinero / Usuario | Vistas de stock y bitácora | Uso de la interfaz | Persona hacia componente | HTTPS |
 | Vistas de stock y bitácora | Modelos de vista de stock y bitácora | Enlace de datos y acciones del usuario | Llamada interna | — |
-| Modelos de vista de stock y bitácora | Repositorio local | Lectura y guardado de lotes y notas, y lectura del catálogo de especies (agregado en el TP4: la HU-08 verifica que la especie exista) | Llamada interna | — |
+| Modelos de vista de stock y bitácora | Repositorio local | Lectura y guardado de lotes y notas | Llamada interna | — |
 | Repositorio local | Cifrado local | Cifrado y descifrado de datos sensibles | Llamada interna | — |
 | Repositorio local | Almacén local | Lectura y escritura | Acceso a datos | IndexedDB API |
 | Gestor de sincronización | Repositorio local | Lectura de pendientes y actualización de estado | Llamada interna | — |
