@@ -173,18 +173,9 @@ classDiagram
     }
 
     class EntradaBitacora {
-        +id: string
+        +id: int
         +fecha: date
         +nota: string
-        +estadoSync: EstadoSync
-        +version: int
-        +lastModified: datetime
-    }
-
-    class EstadoSync {
-        <<enumeration>>
-        pendiente_sync
-        sincronizada
     }
 
     Usuario "1" --> "1" RolUsuario : tiene
@@ -192,7 +183,6 @@ classDiagram
     Usuario "1" --> "0..*" EntradaBitacora : es autor de
     Especie "1" --> "0..*" LoteDeSemilla : se agrupa en
     Especie "1" --> "0..*" EntradaBitacora : es objeto de
-    EntradaBitacora --> EstadoSync : tiene
 ```
 
 ### Diccionario de clases
@@ -204,7 +194,6 @@ classDiagram
 | `Especie` | Ficha de especie: catálogo de referencia, **compartido** entre todos los usuarios, no depende de quién lo cargó. | RF08 |
 | `LoteDeSemilla` | Un lote de semillas de una especie, con su cantidad, año y mes opcional de cosecha, y origen. **Privado**: pertenece a un único `Usuario`. | RF01, RF02, RF03, CU01 |
 | `EntradaBitacora` | Una observación de campo asociada a una especie. **Privada**: pertenece a un único `Usuario` (autor). | RF05, RF06, CU02 |
-| `EstadoSync` | Enumeración del estado de sincronización de una entrada: `pendiente_sync` mientras está solo en el teléfono, `sincronizada` cuando ya llegó al servidor. | EC-01 (TP2, escenario 3.1), DA-01 (TP3) |
 
 
 ### Decisiones de modelado 
@@ -219,7 +208,6 @@ classDiagram
   usa como parámetro de comparación contra el stock derivado por especie. Si en un
   TP posterior el umbral pasara a definirse por especie o por usuario, ahí sí se
   convertiría en una entidad con relaciones propias.
-- **`EntradaBitacora` lleva su estado de sincronización, versión y fecha de modificación (cambio del TP4, HU-08).** La aplicación guarda primero en el teléfono (Local-First, DA-01), así que cada entrada tiene que saber si ya llegó al servidor (`estadoSync`, que es lo que muestra la píldora «Sin sincronizar»), y la sincronización necesita `version` y `lastModified` para resolver conflictos. El `id` pasó de entero a texto (UUID): sin red no hay servidor que numere, y un UUID generado en el teléfono no choca con los de otros dispositivos. El detalle está en `docs/design/diseno-detallado.md`, sección 2.4.
 - **`mesCosecha` es opcional.** La clienta registra como mínimo el año y, cuando lo recuerda, también el mes; los lotes viejos pueden no tenerlo cargado.
 
 ## Elección de procesos a desarrollar
